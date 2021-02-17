@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask.views import View
 from inject import attr
 
@@ -6,7 +6,7 @@ from core.services import Service
 
 
 # Auth views
-class RegisterUserView(View):
+class CreateUserView(View):
     service: Service = attr(Service)
 
     def dispatch_request(self):
@@ -58,6 +58,9 @@ class AuthorizeUserView(View):
                 password=password
             )
 
-            return jsonify({'token':  token}), 200
+            response = make_response(jsonify({'ok': True}), 200)
+            response.set_cookie('token', token)
+
+            return response
         except BaseException as error:
             return str(error), 401
