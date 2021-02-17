@@ -7,12 +7,12 @@ from interfaces.frontend_rpc.app import app
 
 @click.group()
 def start_cli():
-        ...
+    ...
 
 
 @start_cli.command()
 def start_rpc():
-        inject.configure(container)
-        app.run()
+    inject.configure(container)
+    app.run()
 
 

@@ -1,11 +1,11 @@
 <template>
     <v-app>
         <auth-page-layout v-if="isAuthPage">
-            <router-view />
+            <router-view/>
         </auth-page-layout>
 
         <base-layout v-else>
-            <router-view />
+            <router-view/>
         </base-layout>
     </v-app>
 </template>
@@ -23,7 +23,7 @@ export default {
     },
 
     computed: {
-        isAuthPage () {
+        isAuthPage() {
             return this.$route.path === '/' ||
                 this.$route.path.includes('/auth/')
         }
