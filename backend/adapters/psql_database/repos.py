@@ -29,8 +29,19 @@ class PsqlMessengerRepository(IMessengerRepository):
             password=user['password']
         )
 
-    def authorize_user(self, username: str, password: str) -> User:
-        pass
+    def authorize_user(self, login: str, password: str) -> User:
+        user = db.get(login)
+
+        hashed_password = hash_password(password)
+
+        if not user or user['password'] != hashed_password:
+            raise Exception('Invalid credentials')
+
+        return User(
+            username=user['username'],
+            nickname=user['nickname'],
+            password=user['password']
+        )
 
     def get_user_by_username(self, username: str) -> User:
         pass

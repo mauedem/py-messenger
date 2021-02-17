@@ -10,3 +10,9 @@ auth_blueprint.add_url_rule(
         'register_user_view'
     )
 )
+auth_blueprint.add_url_rule(
+    '/login/', methods=['POST'],
+    view_func=views.AuthorizeUserView.as_view(
+        'authorize_user_view'
+    )
+)

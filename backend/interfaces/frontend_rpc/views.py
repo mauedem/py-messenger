@@ -35,3 +35,29 @@ class RegisterUserView(View):
             return jsonify(created_user), 200
         except BaseException as error:
             return str(error), 400
+
+
+class AuthorizeUserView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        data = request.json
+
+        login = data.get('login')
+        password = data.get('password')
+
+        if not login:
+            return 'Username is required', 400
+
+        if not password:
+            return 'Password is required', 400
+
+        try:
+            token = self.service.authorize(
+                login=login,
+                password=password
+            )
+
+            return jsonify({'token':  token}), 200
+        except BaseException as error:
+            return str(error), 401
