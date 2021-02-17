@@ -61,7 +61,7 @@
                            text
                            class="mx-auto mt-3"
                     >
-                        <span class="create-user-button">
+                        <span class="redirect-button">
                             Создать аккаунт
                         </span>
                     </v-btn>
