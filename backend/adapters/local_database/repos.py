@@ -5,7 +5,7 @@ from core.utils import hash_password
 db = dict()
 
 
-class PsqlMessengerRepository(IMessengerRepository):
+class LocalMessengerRepository(IMessengerRepository):
 
     def create_user(self, username: str, nickname: str, password: str) -> User:
         existing_user = db.get(username)
