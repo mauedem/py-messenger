@@ -9,25 +9,20 @@ class PsqlMessengerRepository(IMessengerRepository):
 
     def create_user(self, username: str, nickname: str, password: str) -> User:
         existing_user = db.get(username)
+        print('existing_user = ', existing_user)
 
         if existing_user:
             raise Exception('User with such username already exists')
 
         hashed_password = hash_password(password)
 
-        db[username] = dict(
+        user = db[username] = dict(
             username=username,
             nickname=nickname,
             password=hashed_password
         )
 
-        user = db[username]
-
-        return User(
-            username=user['username'],
-            nickname=user['nickname'],
-            password=user['password']
-        )
+        return User(**user)
 
     def authorize_user(self, login: str, password: str) -> User:
         user = db.get(login)
@@ -37,11 +32,7 @@ class PsqlMessengerRepository(IMessengerRepository):
         if not user or user['password'] != hashed_password:
             raise Exception('Invalid credentials')
 
-        return User(
-            username=user['username'],
-            nickname=user['nickname'],
-            password=user['password']
-        )
+        return User(**user)
 
     def get_user_by_username(self, username: str) -> User:
         user = db.get(username)
@@ -49,8 +40,4 @@ class PsqlMessengerRepository(IMessengerRepository):
         if not user or user['username'] != username:
             raise Exception('Invalid token')
 
-        return User(
-            username=user['username'],
-            nickname=user['nickname'],
-            password=user['password']
-        )
+        return User(**user)
