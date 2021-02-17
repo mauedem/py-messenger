@@ -6,5 +6,5 @@ from core.services import Service
 
 
 def container(binder: Binder):
-    binder.bind(IMessengerRepository, LocalMessengerRepository())
-    binder.bind(Service, Service())
+        binder.bind(IMessengerRepository, LocalMessengerRepository())
+        binder.bind(Service, Service())
