@@ -81,3 +81,13 @@ class AuthenticateUserView(View):
             return jsonify(user), 200
         except BaseException as error:
             return str(error), 401
+
+
+class LogoutUserView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        response = make_response(jsonify({'ok': True}), 200)
+        response.set_cookie('token', '')
+
+        return response

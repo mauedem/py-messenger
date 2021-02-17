@@ -54,6 +54,3 @@ class PsqlMessengerRepository(IMessengerRepository):
             nickname=user['nickname'],
             password=user['password']
         )
-
-    def delete_user(self, username: str) -> None:
-        pass

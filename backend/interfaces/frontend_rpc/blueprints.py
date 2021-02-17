@@ -22,3 +22,9 @@ auth_blueprint.add_url_rule(
         'authenticate_user_view'
     )
 )
+auth_blueprint.add_url_rule(
+    '/logout/', methods=['POST'],
+    view_func=views.LogoutUserView.as_view(
+        'logout_user_view'
+    )
+)

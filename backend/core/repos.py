@@ -13,6 +13,3 @@ class IMessengerRepository(ABC):
 
     @abstractmethod
     def get_user_by_username(self, username: str) -> User: ...
-
-    @abstractmethod
-    def delete_user(self, username: str) -> None: ...
