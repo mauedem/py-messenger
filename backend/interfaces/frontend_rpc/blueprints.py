@@ -16,3 +16,9 @@ auth_blueprint.add_url_rule(
         'authorize_user_view'
     )
 )
+auth_blueprint.add_url_rule(
+    '/authenticate/', methods=['POST'],
+    view_func=views.AuthenticateUserView.as_view(
+        'authenticate_user_view'
+    )
+)

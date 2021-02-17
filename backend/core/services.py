@@ -1,7 +1,7 @@
 from inject import attr
 
 from core.repos import IMessengerRepository
-from core.utils import generate_jwt_token
+from core.utils import generate_jwt_token, decode_jwt_token
 
 
 class Service:
@@ -37,4 +37,16 @@ class Service:
             raise error
 
     def authenticate(self, token: str) -> dict:
-        ...
+        try:
+            username_dict = decode_jwt_token(token)
+
+            username = username_dict['username']
+            user = self.repo.get_user_by_username(username)
+
+            return dict(
+                username=user.username,
+                nickname=user.nickname,
+                password=user.password
+            )
+        except BaseException as error:
+            raise error

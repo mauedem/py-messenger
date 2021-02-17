@@ -44,7 +44,16 @@ class PsqlMessengerRepository(IMessengerRepository):
         )
 
     def get_user_by_username(self, username: str) -> User:
-        pass
+        user = db.get(username)
+
+        if not user or user['username'] != username:
+            raise Exception('Invalid token')
+
+        return User(
+            username=user['username'],
+            nickname=user['nickname'],
+            password=user['password']
+        )
 
     def delete_user(self, username: str) -> None:
         pass

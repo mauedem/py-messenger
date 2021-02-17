@@ -10,3 +10,7 @@ def hash_password(password: str):
 
 def generate_jwt_token(user_dict: dict[str, str]):
     return jwt.encode(user_dict, 'secret', algorithm='HS256')
+
+
+def decode_jwt_token(token: str):
+    return jwt.decode(token, 'secret', algorithms=['HS256'])

@@ -47,7 +47,7 @@ class AuthorizeUserView(View):
         password = data.get('password')
 
         if not login:
-            return 'Username is required', 400
+            return 'Login is required', 400
 
         if not password:
             return 'Password is required', 400
@@ -62,5 +62,22 @@ class AuthorizeUserView(View):
             response.set_cookie('token', token)
 
             return response
+        except BaseException as error:
+            return str(error), 401
+
+
+class AuthenticateUserView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        token = request.cookies.get('token')
+
+        if not token:
+            return 'No token', 401
+
+        try:
+            user = self.service.authenticate(token)
+
+            return jsonify(user), 200
         except BaseException as error:
             return str(error), 401
