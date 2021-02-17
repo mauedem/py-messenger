@@ -30,3 +30,7 @@ export default {
     }
 }
 </script>
+
+<style lang="stylus">
+@import "styles/main.styl"
+</style>

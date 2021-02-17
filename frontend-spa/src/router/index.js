@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '/auth/signup',
+        path: '/auth/signup/',
         name: 'SignUp',
         component: SignUp
     },
