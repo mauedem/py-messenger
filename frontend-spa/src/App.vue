@@ -23,7 +23,7 @@ export default {
     },
 
     computed: {
-        isAuthPage() {
+        isAuthPage () {
             return this.$route.path === '/' ||
                 this.$route.path.includes('/auth/')
         }

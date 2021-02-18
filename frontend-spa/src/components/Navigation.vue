@@ -78,6 +78,7 @@
             <v-list-item
                 class="navigation__item mt-auto"
                 style="margin-top: 440px !important;"
+                @click="showConfirmLogoutModal"
                 link
             >
                 <v-list-item-icon class="mr-3 ml-1">
@@ -106,16 +107,20 @@ export default {
         isNavigationOpen: true,
 
         items: [
-            {title: 'Мои учетные данные', icon: 'mdi-view-dashboard'},
-            {title: 'Мои контакты', icon: 'mdi-forum'},
-            {title: 'Настройки', icon: 'mdi-cog'}
+            { title: 'Мои учетные данные', icon: 'mdi-view-dashboard' },
+            { title: 'Мои контакты', icon: 'mdi-forum' },
+            { title: 'Настройки', icon: 'mdi-cog' }
         ]
     }),
 
     methods: {
-        toggleNavigationState() {
+        toggleNavigationState () {
             this.isNavigationOpen = !this.isNavigationOpen
-        }
+        },
+
+        showConfirmLogoutModal () {
+            this.$emit('show-confirm-logout-modal')
+        },
     }
 }
 </script>

@@ -41,5 +41,20 @@ export default {
 
             return response.json()
         }
+
+        Vue.prototype.$transport.logoutUser = async function () {
+            const url = `${baseUrl}/auth/logout/`
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
+            })
+
+            if (!response.ok) {
+                throw new Error(`Bad response: ${response.status}`)
+            }
+        }
     }
 }
