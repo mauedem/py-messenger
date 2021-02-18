@@ -34,7 +34,7 @@ class CreateUserView(View):
 
             return jsonify(created_user), 200
         except BaseException as error:
-            return str(error), 400
+            return jsonify(str(error)), 400
 
 
 class AuthorizeUserView(View):
@@ -63,7 +63,7 @@ class AuthorizeUserView(View):
 
             return response
         except BaseException as error:
-            return str(error), 401
+            return jsonify(str(error)), 401
 
 
 class AuthenticateUserView(View):
@@ -80,7 +80,7 @@ class AuthenticateUserView(View):
 
             return jsonify(user), 200
         except BaseException as error:
-            return str(error), 401
+            return jsonify(str(error)), 401
 
 
 class LogoutUserView(View):

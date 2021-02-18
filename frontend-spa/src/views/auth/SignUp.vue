@@ -101,32 +101,43 @@
             </v-col>
         </v-row>
 
-        <v-dialog
+        <v-snackbar
             v-model="isUserExistsError"
-            max-width="700"
+            :timeout="5000"
+            color="error"
+            shaped
+            absolute
+            bottom
         >
-            <v-alert
-                type="error"
-                prominent
-                class="mb-0"
-            >
-                Пользователь с таким логином уже существует
-            </v-alert>
-        </v-dialog>
 
-        <v-dialog
+            <template>
+                <v-btn text>
+                    <v-icon>mdi-alert</v-icon>
+                </v-btn>
+            </template>
+
+            Пользователь с таким именем уже существует
+        </v-snackbar>
+
+        <v-snackbar
             v-model="isUserRegisteredSuccessfully"
-            max-width="700"
+            :timeout="2000"
+            absolute
+            bottom
+            shaped
+            color="success"
             @input="v => v || redirectToSignInPage()"
         >
-            <v-alert
-                type="success"
-                prominent
-                class="mb-0"
-            >
-                Пользователь успешно зарегистрирован
-            </v-alert>
-        </v-dialog>
+            <template>
+                <v-btn text
+                       class="d-inline-block">
+                    <v-icon>mdi-checkbox-marked-circle</v-icon>
+                </v-btn>
+            </template>
+
+            <span class="body-2 font-weight-bold">Пользователь успешно зарегистрирован</span>
+            <p class="center">Сейчас вы будете перенаправлены на страницу входа</p>
+        </v-snackbar>
     </v-container>
 </template>
 
@@ -230,7 +241,7 @@ export default {
             if (!this.checkFormValidation()) return
 
             try {
-                const user = await this.$transport.createUser({
+                const user = await this.$transport.registerUser({
                     username: this.form.username,
                     nickname: this.form.nickname,
                     password: this.form.password
