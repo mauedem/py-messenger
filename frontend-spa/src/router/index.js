@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import SignUp from '@/views/auth/SignUp'
 import SignIn from '@/views/auth/SignIn'
+import Messenger from '@/views/messenger/Messenger'
 
 Vue.use(VueRouter)
 
@@ -15,6 +17,11 @@ const routes = [
         path: '/',
         name: 'SignIn',
         component: SignIn
+    },
+    {
+        path: '/messenger/',
+        name: 'Messenger',
+        component: Messenger
     }
 ]
 

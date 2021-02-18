@@ -153,9 +153,15 @@ export default {
 
             try {
                 await this.$transport.authorizeUser(this.form)
+
+                await this.redirectToMessenger()
             } catch (err) {
                 this.invalidCredentialsError = true
             }
+        },
+
+        redirectToMessenger () {
+            this.$router.push({ name: 'Messenger' })
         }
     }
 }

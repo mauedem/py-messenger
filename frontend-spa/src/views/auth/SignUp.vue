@@ -241,13 +241,12 @@ export default {
             if (!this.checkFormValidation()) return
 
             try {
-                const user = await this.$transport.registerUser({
+                await this.$transport.registerUser({
                     username: this.form.username,
                     nickname: this.form.nickname,
                     password: this.form.password
                 })
 
-                console.log('user signup = ', user)
                 this.isUserRegisteredSuccessfully = true
             } catch (err) {
                 this.isUserExistsError = true

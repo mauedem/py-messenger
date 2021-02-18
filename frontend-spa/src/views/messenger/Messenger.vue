@@ -1,13 +1,11 @@
 <template>
-$END$
+    <div>
+        M
+    </div>
 </template>
 
 <script>
 export default {
-name: "Messenger"
+    name: 'Messenger'
 }
 </script>
-
-<style scoped>
-
-</style>
