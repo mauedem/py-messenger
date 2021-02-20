@@ -53,27 +53,33 @@
         <v-divider class="mt-3"/>
 
         <v-list
+            nav
             class="navigation"
         >
-            <v-list-item
-                v-for="item in items"
-                :key="item.title"
-                link
-            >
-                <v-list-item-icon class="mr-3 ml-1">
-                    <v-icon
-                        style="font-size: 36px"
-                        color="gray"
-                    >
-                        {{ item.icon }}
-                    </v-icon>
-                </v-list-item-icon>
+            <v-list-item-group v-model="selectedItem"
+                               color="primary">
+                <v-list-item
+                    v-for="item in items"
+                    :key="item.title"
+                    @click="redirectToRouteName(item)"
+                    link
+                >
+                    <v-list-item-icon class="mr-3 ml-1">
+                        <v-icon
+                            style="font-size: 36px"
+                            color="gray"
+                        >
+                            {{ item.icon }}
+                        </v-icon>
+                    </v-list-item-icon>
 
-                <v-list-item-content>
-                    <v-list-item-title style="font-size: 14px">{{ item.title }}
-                    </v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title style="font-size: 14px">
+                            {{ item.title }}
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
 
             <v-list-item
                 class="navigation__item mt-auto"
@@ -90,8 +96,7 @@
                 </v-list-item-icon>
 
                 <v-list-item-content>
-                    <v-list-item-title style="font-size: 14px">Выход
-                    </v-list-item-title>
+                    <v-list-item-title style="font-size: 14px">Выход</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>
@@ -112,9 +117,19 @@ export default {
     data: () => ({
         isNavigationOpen: true,
 
+        selectedItem: 0,
+
         items: [
-            { title: 'Мои учетные данные', icon: 'mdi-view-dashboard' },
-            { title: 'Мои контакты', icon: 'mdi-forum' },
+            {
+                title: 'Мои чаты',
+                icon: 'mdi-forum',
+                routeName: 'Messenger'
+            },
+            {
+                title: 'Мои учетные данные',
+                icon: 'mdi-view-dashboard',
+                routeName: 'Credentials'
+            },
             { title: 'Настройки', icon: 'mdi-cog' }
         ]
     }),
@@ -132,7 +147,12 @@ export default {
 
         showConfirmLogoutModal () {
             this.$emit('show-confirm-logout-modal')
+        },
+
+        redirectToRouteName (item) {
+            this.selectedItem = item
+            this.$router.push({ name: item.routeName })
         }
-    },
+    }
 }
 </script>
