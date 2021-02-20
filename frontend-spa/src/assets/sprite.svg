@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Иконка telegram -->
+    <symbol id="telegram" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M9.84409 15.4925L9.03175 12.8173L6.70478 12.091C6.58459 12.0542 6.50111 11.945 6.49704 11.8194C6.49297 11.6937 6.56922 11.5794 6.68678 11.5348L15.5415 8.11938C15.692 8.06214 15.8618 8.09112 15.9849 8.19506C16.108 8.29901 16.165 8.46155 16.1337 8.61959L14.6461 15.6305C14.6057 15.8227 14.4702 15.9811 14.2865 16.0508C14.1029 16.1204 13.8964 16.0917 13.7387 15.9747L11.6258 14.414L10.3803 15.6265C10.2996 15.7049 10.1841 15.736 10.0749 15.7087C9.96571 15.6814 9.87841 15.5996 9.84409 15.4925Z"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="9.00375" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- Иконка vk -->
+    <symbol id="vk" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M10.684 9.644H11.899V15.72H11.897C10.646 15.72 9.27101 14.96 8.29601 13.56C6.83201 11.508 6.43201 9.957 6.43201 9.645"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M16.658 15.72C16.658 15.72 16.216 14.788 15.319 13.763C14.721 13.062 13.879 12.683 13.113 12.683C13.879 12.683 14.721 12.303 15.319 11.603C16.216 10.577 16.658 9.645 16.658 9.645"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M13.113 12.684H11.897" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- Иконка сообщения -->
+    <symbol id="message" viewBox="0 0 24 24">
+        <path d="M10.1 19.3L6.6 21.1C6.6 19.9 6.6 18.7 6.6 17.9C4.4 16.3 3 14 3 11.3C3 6.8 7 3.1 12 3.1C17 3.1 21 6.7 21 11.3V11.3C21 15.8 17 19.5 12 19.5C11.4 19.5 10.7 19.4 10.1 19.3"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M15.9 13.7C13.7 15.9 10.2 15.9 8 13.7"
+              stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M10 8.7V9.7" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 8.7V9.7" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+</svg>
+

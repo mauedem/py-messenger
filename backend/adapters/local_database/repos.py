@@ -9,7 +9,6 @@ class LocalMessengerRepository(IMessengerRepository):
 
     def create_user(self, username: str, nickname: str, password: str) -> User:
         existing_user = db.get(username)
-        print('existing_user = ', existing_user)
 
         if existing_user:
             raise Exception('User with such username already exists')

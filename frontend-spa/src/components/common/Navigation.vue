@@ -20,7 +20,7 @@
                     PyMessenger
                 </v-list-item-title>
                 <v-list-item-subtitle class="mt-1">
-                    2021
+                    Universal messaging <br> application
                 </v-list-item-subtitle>
             </div>
 
@@ -45,8 +45,8 @@
             </v-avatar>
 
             <div class="d-inline-block mr-auto">
-                <p class="mb-0 font-weight-bold">Eryn Drem</p>
-                <p class="mb-0">@eryndrem</p>
+                <p class="mb-0 font-weight-bold">{{ currentUser.nickname }}</p>
+                <p class="mb-0">@{{ currentUser.username }}</p>
             </div>
         </v-list-item>
 
@@ -77,7 +77,6 @@
 
             <v-list-item
                 class="navigation__item mt-auto"
-                style="margin-top: 440px !important;"
                 @click="showConfirmLogoutModal"
                 link
             >
@@ -103,6 +102,13 @@
 export default {
     name: 'Navigation',
 
+    props: {
+        user: {
+            type: Object,
+            required: true
+        }
+    },
+
     data: () => ({
         isNavigationOpen: true,
 
@@ -113,6 +119,12 @@ export default {
         ]
     }),
 
+    computed: {
+        currentUser () {
+            return this.$store.state.currentUser
+        }
+    },
+
     methods: {
         toggleNavigationState () {
             this.isNavigationOpen = !this.isNavigationOpen
@@ -120,7 +132,7 @@ export default {
 
         showConfirmLogoutModal () {
             this.$emit('show-confirm-logout-modal')
-        },
-    }
+        }
+    },
 }
 </script>

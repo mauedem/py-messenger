@@ -1,4 +1,4 @@
-import {baseUrl} from '@/config'
+import { baseUrl } from '@/config'
 
 import Vue from 'vue'
 
@@ -33,6 +33,25 @@ export default {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
                 body: JSON.stringify(user)
+            })
+
+            console.log('response = ', response)
+
+            if (!response.ok) {
+                throw new Error(`Bad response: ${response.status}`)
+            }
+
+            return response.json()
+        }
+
+        Vue.prototype.$transport.getAuthorizedUser = async function () {
+            const url = `${baseUrl}/auth/authenticate/`
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
             })
 
             if (!response.ok) {
