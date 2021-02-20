@@ -24,8 +24,7 @@ export default {
 
     computed: {
         isAuthPage () {
-            return this.$route.path === '/' ||
-                this.$route.path.includes('/auth/')
+            return this.$route.path.includes('/auth/')
         }
     }
 }

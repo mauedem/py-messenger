@@ -14,12 +14,12 @@ const routes = [
         component: SignUp
     },
     {
-        path: '/',
+        path: '/auth/signin/',
         name: 'SignIn',
         component: SignIn
     },
     {
-        path: '/messenger/',
+        path: '/',
         name: 'Messenger',
         component: Messenger
     }

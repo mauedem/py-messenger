@@ -88,7 +88,7 @@ export default {
 
                 this.$store.commit('SET_CURRENT_USER', user)
             } catch (err) {
-                console.log(err)
+                await this.$router.push({ name: 'SignIn' })
             }
         }
     },
