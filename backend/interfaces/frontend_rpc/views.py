@@ -1,3 +1,5 @@
+import asyncio
+
 from flask import request, jsonify, make_response
 from flask.views import View
 from inject import attr
@@ -5,7 +7,7 @@ from inject import attr
 from core.services import Service
 
 
-# Auth views
+# Auth blueprint
 class CreateUserView(View):
     service: Service = attr(Service)
 
@@ -91,3 +93,37 @@ class LogoutUserView(View):
         response.set_cookie('token', '')
 
         return response
+
+
+# Telegram blueprint
+class TelegramAuthorizeUserView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        data = request.json
+
+        phone_number = data.get('phone_number')
+        password = data.get('password')
+        code = data.get('code')
+
+        if not phone_number:
+            return jsonify('Phone number is required'), 400
+
+        if not password:
+            return jsonify('Password is required'), 400
+
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            user = loop.run_until_complete(
+                self.service.telegram_authorize_user(
+                    phone_number,
+                    password,
+                    code
+                )
+            )
+
+            return jsonify(user), 200
+        except BaseException as error:
+            return jsonify(str(error)), 449
+

@@ -15,3 +15,13 @@ class Message:
     reciever: User
     text: str
     created_at: datetime
+
+
+@dataclass
+class TelegramUser:
+    # Нужен ли id?
+    id: int
+    first_name: str
+    last_name: str
+    username: str
+    phone: str

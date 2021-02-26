@@ -1,2 +1,8 @@
-GET https://oauth.vk.com/authorize?client_id=7767810&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends&response_type=token&v=5.52
+POST http://localhost/private_api/tg/authorize/
 Content-Type: application/json
+
+{
+    "phone_number": "+79530490707",
+    "password": "6502779739",
+    "code": "66259"
+}

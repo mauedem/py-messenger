@@ -89,7 +89,7 @@
                 </v-card>
 
                 <div class="d-flex">
-                    <v-btn to="/"
+                    <v-btn to="/auth/signin/"
                            text
                            class="mx-auto mt-3"
                     >

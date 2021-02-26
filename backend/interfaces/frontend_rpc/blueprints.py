@@ -28,3 +28,12 @@ auth_blueprint.add_url_rule(
         'logout_user_view'
     )
 )
+
+# Telegram Blueprint
+auth_blueprint = Blueprint('tg', __name__, url_prefix='/private_api/tg')
+auth_blueprint.add_url_rule(
+    '/authorize/', methods=['POST'],
+    view_func=views.TelegramAuthorizeUserView.as_view(
+        'telegram_authorize_user_view'
+    )
+)

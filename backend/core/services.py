@@ -1,12 +1,18 @@
 from inject import attr
+import asyncio
 
+from adapters.telegram_api_provider.message_provider import \
+    TelegramMessageProvider
+from core.message_provider import IMessageProvider
 from core.repos import IMessengerRepository
 from core.utils import generate_jwt_token, decode_jwt_token
 
 
 class Service:
     repo: IMessengerRepository = attr(IMessengerRepository)
+    telegram_provider: IMessageProvider = attr(TelegramMessageProvider)
 
+    # Auth methods
     def register(self, username: str, nickname: str, password: str) -> dict:
         try:
             user = self.repo.create_user(
@@ -49,4 +55,25 @@ class Service:
                 password=user.password
             )
         except BaseException as error:
+            raise error
+
+    # Telegram methods
+    async def telegram_authorize_user(self, phone_number: str, password: str,
+                                      code: str = None) -> dict:
+        try:
+            telegram_user = await self.telegram_provider.authorize_user(
+                phone_number=phone_number,
+                password=password,
+                code=code
+            )
+
+            return dict(
+                id=telegram_user.id,
+                first_name=telegram_user.first_name,
+                last_name=telegram_user.last_name,
+                username=telegram_user.username,
+                phone=telegram_user.phone
+            )
+        except BaseException as error:
+            print(str(error))
             raise error
