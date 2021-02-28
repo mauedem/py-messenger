@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Union
 
 
 @dataclass
@@ -11,17 +12,39 @@ class User:
 
 @dataclass
 class Message:
-    sender: User
-    reciever: User
+    sender_id: int
     text: str
     created_at: datetime
 
 
 @dataclass
 class TelegramUser:
-    # Нужен ли id?
+    # TODO добавить аву юзера
     id: int
     first_name: str
     last_name: str
     username: str
     phone: str
+
+
+@dataclass
+class TelegramChat:
+    # TODO добавить аву чата
+    id: int
+    title: str
+    creator: bool
+
+
+@dataclass
+class TelegramChannel:
+    # TODO добавить аву канала
+    id: int
+    title: str
+    creator: bool
+
+
+@dataclass
+class TelegramDialog:
+    name: str
+    entity: Union[TelegramUser, TelegramChat, TelegramChannel]
+    message: Message

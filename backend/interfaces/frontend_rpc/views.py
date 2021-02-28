@@ -127,3 +127,17 @@ class TelegramAuthorizeUserView(View):
         except BaseException as error:
             return jsonify(str(error)), 449
 
+
+class TelegramGetUserDialogsView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            dialogs = self.service.get_user_dialogs()
+
+            return jsonify(dialogs), 200
+        except BaseException as error:
+            return jsonify(str(error)), 400
+

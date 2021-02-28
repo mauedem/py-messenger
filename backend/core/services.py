@@ -3,6 +3,7 @@ import asyncio
 
 from adapters.telegram_api_provider.message_provider import \
     TelegramMessageProvider
+from core.entities import TelegramUser, TelegramChannel
 from core.message_provider import IMessageProvider
 from core.repos import IMessengerRepository
 from core.utils import generate_jwt_token, decode_jwt_token
@@ -71,9 +72,45 @@ class Service:
                 id=telegram_user.id,
                 first_name=telegram_user.first_name,
                 last_name=telegram_user.last_name,
-                username=telegram_user.username,
                 phone=telegram_user.phone
             )
         except BaseException as error:
             print(str(error))
             raise error
+
+    def get_user_dialogs(self) -> list[dict]:
+        dialogs = self.telegram_provider.get_user_dialogs()
+
+        result = []
+        for dialog in dialogs:
+            formatted_date = dialog.message.created_at\
+                .strftime("%d/%m/%Y, ""%H:%M:%S")
+
+            message = dict(
+                sender_id=dialog.message.sender_id,
+                text=dialog.message.text,
+                created_at=formatted_date
+            )
+
+            if isinstance(dialog.entity, TelegramUser):
+                entity = dict(
+                    id=dialog.entity.id,
+                    first_name=dialog.entity.first_name,
+                    last_name=dialog.entity.last_name,
+                    username=dialog.entity.username,
+                    phone=dialog.entity.phone
+                )
+            else:
+                entity = dict(
+                    id=dialog.entity.id,
+                    title=dialog.entity.title,
+                    creator=dialog.entity.creator
+                )
+
+            result.append(dict(
+                name=dialog.name,
+                entity=entity,
+                message=message
+            ))
+
+        return result

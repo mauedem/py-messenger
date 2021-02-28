@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from core.entities import Message, TelegramUser
+from core.entities import Message, TelegramUser, TelegramDialog
 
 
 class IMessageProvider(ABC):
@@ -8,6 +8,9 @@ class IMessageProvider(ABC):
     def authorize_user(self, phone_number: str, password: str = None,
                        code: str = None) -> TelegramUser:
         ...
+
+    @abstractmethod
+    def get_user_dialogs(self) -> list[TelegramDialog]: ...
 
     @abstractmethod
     def send_message(self, message: Message): ...

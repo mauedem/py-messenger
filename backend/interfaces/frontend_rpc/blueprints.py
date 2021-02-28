@@ -37,3 +37,9 @@ auth_blueprint.add_url_rule(
         'telegram_authorize_user_view'
     )
 )
+auth_blueprint.add_url_rule(
+    '/dialogs/', methods=['GET'],
+    view_func=views.TelegramGetUserDialogsView.as_view(
+        'telegram_get_user_dialogs_view'
+    )
+)
