@@ -12,7 +12,7 @@ class IMessageProvider(ABC):
     def get_user_dialogs(self) -> list[TelegramDialog]: ...
 
     @abstractmethod
-    def get_dialog_messages(self, dialog_type: str, dialog_id: str) -> \
+    def get_dialog_messages(self, dialog_id: str) -> \
         list[Message]: ...
 
     @abstractmethod

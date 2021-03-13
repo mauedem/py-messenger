@@ -99,7 +99,7 @@ class TelegramMessageProvider(IMessageProvider):
 
         return result
 
-    async def get_dialog_messages(self, dialog_type: str, dialog_id: str) -> \
+    async def get_dialog_messages(self, dialog_id: str) -> \
             list[Message]:
         session_key = os.environ.get('SESSION_KEY')
         if not session_key:
@@ -109,13 +109,7 @@ class TelegramMessageProvider(IMessageProvider):
         client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
         await client.connect()
 
-        if dialog_type == 'chat':
-            entity = await client.get_input_entity(-int(dialog_id))
-        elif dialog_type == 'channel':
-            channel_id = str(-100) + dialog_id
-            entity = await client.get_input_entity(int(channel_id))
-        else:
-            entity = await client.get_input_entity(int(dialog_id))
+        entity = await client.get_input_entity(int(dialog_id))
 
         messages = await client.get_messages(
             entity=entity,

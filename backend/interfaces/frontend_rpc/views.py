@@ -150,11 +150,7 @@ class TelegramGetDialogMessagesView(View):
     def dispatch_request(self):
         data = request.json
 
-        dialog_type = data.get('dialog_type')
         dialog_id = data.get('dialog_id')
-
-        if not dialog_type:
-            return jsonify('Dialog type is required'), 400
 
         if not dialog_id:
             return jsonify('Dialog id is required'), 400
@@ -163,10 +159,7 @@ class TelegramGetDialogMessagesView(View):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             messages = loop.run_until_complete(
-                self.service.get_dialog_messages(
-                    dialog_type,
-                    dialog_id
-                )
+                self.service.get_dialog_messages(dialog_id)
             )
 
             return jsonify(messages), 200

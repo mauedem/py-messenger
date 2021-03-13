@@ -95,7 +95,6 @@ class Service:
 
             if isinstance(dialog.entity, TelegramUser):
                 entity = dict(
-                    type='user',
                     id=dialog.entity.id,
                     first_name=dialog.entity.first_name,
                     last_name=dialog.entity.last_name,
@@ -103,17 +102,19 @@ class Service:
                     phone=dialog.entity.phone
                 )
             elif isinstance(dialog.entity, TelegramChannel):
+                channel_id = str(-100) + str(dialog.entity.id)
+
                 entity = dict(
-                    type='channel',
-                    id=dialog.entity.id,
+                    id=channel_id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                     username=dialog.entity.username
                 )
             else:
+                chat_id = -dialog.entity.id
+
                 entity = dict(
-                    type='chat',
-                    id=dialog.entity.id,
+                    id=chat_id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                 )
@@ -126,12 +127,9 @@ class Service:
 
         return result
 
-    async def get_dialog_messages(self, dialog_type: str, dialog_id: str) -> \
+    async def get_dialog_messages(self, dialog_id: str) -> \
             list[dict[str, Union[str, int]]]:
-        messages = await self.telegram_provider.get_dialog_messages(
-            dialog_type,
-            dialog_id
-        )
+        messages = await self.telegram_provider.get_dialog_messages(dialog_id)
 
         result = []
         for message in messages:
