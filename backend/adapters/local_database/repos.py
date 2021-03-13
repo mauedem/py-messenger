@@ -1,6 +1,6 @@
 from core.entities import User
 from core.repos import IMessengerRepository
-from core.utils import hash_password
+from core.tokenizer import hash_password
 
 db = dict()
 

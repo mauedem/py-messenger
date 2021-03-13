@@ -135,7 +135,9 @@ class TelegramGetUserDialogsView(View):
         try:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            dialogs = self.service.get_user_dialogs()
+            dialogs = loop.run_until_complete(
+                self.service.get_user_dialogs()
+            )
 
             return jsonify(dialogs), 200
         except BaseException as error:

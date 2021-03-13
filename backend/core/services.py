@@ -1,12 +1,11 @@
 from inject import attr
-import asyncio
 
 from adapters.telegram_api_provider.message_provider import \
     TelegramMessageProvider
 from core.entities import TelegramUser, TelegramChannel
 from core.message_provider import IMessageProvider
 from core.repos import IMessengerRepository
-from core.utils import generate_jwt_token, decode_jwt_token
+from core.tokenizer import generate_jwt_token, decode_jwt_token
 
 
 class Service:
@@ -60,7 +59,7 @@ class Service:
 
     # Telegram methods
     async def telegram_authorize_user(self, phone_number: str, password: str,
-                                      code: str = None) -> dict:
+                                code: str = None) -> dict:
         try:
             telegram_user = await self.telegram_provider.authorize_user(
                 phone_number=phone_number,
@@ -78,12 +77,12 @@ class Service:
             print(str(error))
             raise error
 
-    def get_user_dialogs(self) -> list[dict]:
-        dialogs = self.telegram_provider.get_user_dialogs()
+    async def get_user_dialogs(self) -> list[dict]:
+        dialogs = await self.telegram_provider.get_user_dialogs()
 
         result = []
         for dialog in dialogs:
-            formatted_date = dialog.message.created_at\
+            formatted_date = dialog.message.created_at \
                 .strftime("%d/%m/%Y, ""%H:%M:%S")
 
             message = dict(

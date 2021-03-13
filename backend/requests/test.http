@@ -1,0 +1,8 @@
+GET http://localhost/private_api/tg/dialogs/
+Content-Type: application/json
+
+{
+    "phone_number": "+79827160828",
+    "password": "1337",
+    "code": "37167"
+}

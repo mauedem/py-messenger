@@ -1,24 +1,33 @@
-from telethon.tl.types import User, Chat, PeerUser, PeerChannel
+import os
+
+from telethon.sessions import StringSession
+from telethon.tl.types import User, Chat, PeerUser
 
 from core.entities import Message, TelegramUser, TelegramDialog, TelegramChat, \
     TelegramChannel
 from core.message_provider import IMessageProvider
-from telethon import TelegramClient
+# from telethon import TelegramClient
 from telethon.sync import TelegramClient
 
-api_id = 3487673
-api_hash = '214be9c66044d5e5fb88783977990384'
+from config import (API_ID, API_HASH)
 
 
 class TelegramMessageProvider(IMessageProvider):
     async def authorize_user(self, phone_number: str, password: str = None,
                              code: str = None) -> TelegramUser:
-        client = TelegramClient('user_session', api_id, api_hash)
+        client = TelegramClient('user-session', API_ID, API_HASH)
+        session_key = StringSession.save(client.session)
+
+        os.environ['SESSION_KEY'] = session_key
+
+        with open('session.txt', 'w') as txt_file:
+            txt_file.write(session_key)
 
         await client.start(
-            code_callback=lambda: code,
             phone=lambda: phone_number,
             password=lambda: password,
+            code_callback=lambda: code,
+            max_attempts=1,
         )
 
         user = await client.get_me()
@@ -31,54 +40,62 @@ class TelegramMessageProvider(IMessageProvider):
             phone=user.phone,
         )
 
-    def get_user_dialogs(self) -> list[TelegramDialog]:
-        with TelegramClient('user_session', api_id, api_hash) as client:
-            dialogs = client.get_dialogs()
+    async def get_user_dialogs(self) -> list[TelegramDialog]:
+        session_key = os.environ.get('SESSION_KEY')
 
-            result = []
-            for dialog in dialogs:
-                if isinstance(dialog.entity, User):
-                    entity = TelegramUser(
-                        id=dialog.entity.id,
-                        first_name=dialog.entity.first_name,
-                        last_name=dialog.entity.last_name,
-                        username=dialog.entity.username,
-                        phone=dialog.entity.phone
-                    )
-                elif isinstance(dialog.entity, Chat):
-                    entity = TelegramChat(
-                        id=dialog.entity.id,
-                        title=dialog.entity.title,
-                        creator=dialog.entity.creator
-                    )
-                else:
-                    entity = TelegramChannel(
-                        id=dialog.entity.id,
-                        title=dialog.entity.title,
-                        creator=dialog.entity.creator
-                    )
+        if not session_key:
+            with open('session.txt', 'r') as txt_file:
+                session_key = txt_file.read()
 
-                try:
-                    if isinstance(dialog.message.from_id, PeerUser):
-                        sender_id = dialog.message.from_id.user_id
-                    else:
-                        sender_id = dialog.message.from_id.channel_id
-                except AttributeError:
-                    sender_id = dialog.message.from_id
+        client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
+        await client.connect()
 
-                message = Message(
-                    sender_id=sender_id,
-                    text=dialog.message.message,
-                    created_at=dialog.message.date
+        dialogs = await client.get_dialogs()
+
+        result = []
+        for dialog in dialogs:
+            if isinstance(dialog.entity, User):
+                entity = TelegramUser(
+                    id=dialog.entity.id,
+                    first_name=dialog.entity.first_name,
+                    last_name=dialog.entity.last_name,
+                    username=dialog.entity.username,
+                    phone=dialog.entity.phone
+                )
+            elif isinstance(dialog.entity, Chat):
+                entity = TelegramChat(
+                    id=dialog.entity.id,
+                    title=dialog.entity.title,
+                    creator=dialog.entity.creator
+                )
+            else:
+                entity = TelegramChannel(
+                    id=dialog.entity.id,
+                    title=dialog.entity.title,
+                    creator=dialog.entity.creator
                 )
 
-                result.append(TelegramDialog(
-                    name=dialog.name,
-                    entity=entity,
-                    message=message
-                ))
+            try:
+                if isinstance(dialog.message.from_id, PeerUser):
+                    sender_id = dialog.message.from_id.user_id
+                else:
+                    sender_id = dialog.message.from_id.channel_id
+            except AttributeError:
+                sender_id = dialog.message.from_id
 
-            return result
+            message = Message(
+                sender_id=sender_id,
+                text=dialog.message.message,
+                created_at=dialog.message.date
+            )
+
+            result.append(TelegramDialog(
+                name=dialog.name,
+                entity=entity,
+                message=message
+            ))
+
+        return result
 
     def send_message(self, message: Message):
         pass
