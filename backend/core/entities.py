@@ -12,6 +12,7 @@ class User:
 
 @dataclass
 class Message:
+    id: int
     sender_id: int
     text: str
     created_at: datetime

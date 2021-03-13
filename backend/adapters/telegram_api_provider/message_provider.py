@@ -86,6 +86,7 @@ class TelegramMessageProvider(IMessageProvider):
                     sender_id = dialog.message.peer_id.channel_id
 
             message = Message(
+                id=dialog.message.id,
                 sender_id=sender_id,
                 text=dialog.message.message,
                 created_at=dialog.message.date
@@ -130,6 +131,7 @@ class TelegramMessageProvider(IMessageProvider):
                     sender_id = message.peer_id.channel_id
 
             message = Message(
+                id=message.id,
                 sender_id=sender_id,
                 text=message.message,
                 created_at=message.date

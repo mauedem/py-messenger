@@ -88,6 +88,7 @@ class Service:
                 .strftime("%d/%m/%Y, ""%H:%M:%S")
 
             message = dict(
+                id=dialog.message.id,
                 sender_id=dialog.message.sender_id,
                 text=dialog.message.text,
                 created_at=formatted_date
@@ -137,6 +138,7 @@ class Service:
                 .strftime("%d/%m/%Y, ""%H:%M:%S")
 
             result.append(dict(
+                id=message.id,
                 created_at=formatted_date,
                 sender_id=message.sender_id,
                 text=message.text,
