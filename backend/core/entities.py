@@ -41,6 +41,7 @@ class TelegramChannel:
     id: int
     title: str
     creator: bool
+    username: str
 
 
 @dataclass

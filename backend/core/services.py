@@ -1,3 +1,5 @@
+from typing import Any, Union
+
 from inject import attr
 
 from adapters.telegram_api_provider.message_provider import \
@@ -77,7 +79,7 @@ class Service:
             print(str(error))
             raise error
 
-    async def get_user_dialogs(self) -> list[dict]:
+    async def get_user_dialogs(self) -> list[dict[str, Any]]:
         dialogs = await self.telegram_provider.get_user_dialogs()
 
         result = []
@@ -93,17 +95,27 @@ class Service:
 
             if isinstance(dialog.entity, TelegramUser):
                 entity = dict(
+                    type='user',
                     id=dialog.entity.id,
                     first_name=dialog.entity.first_name,
                     last_name=dialog.entity.last_name,
                     username=dialog.entity.username,
                     phone=dialog.entity.phone
                 )
-            else:
+            elif isinstance(dialog.entity, TelegramChannel):
                 entity = dict(
+                    type='channel',
                     id=dialog.entity.id,
                     title=dialog.entity.title,
-                    creator=dialog.entity.creator
+                    creator=dialog.entity.creator,
+                    username=dialog.entity.username
+                )
+            else:
+                entity = dict(
+                    type='chat',
+                    id=dialog.entity.id,
+                    title=dialog.entity.title,
+                    creator=dialog.entity.creator,
                 )
 
             result.append(dict(
@@ -113,3 +125,23 @@ class Service:
             ))
 
         return result
+
+    async def get_dialog_messages(self, dialog_type: str, dialog_id: str) -> \
+            list[dict[str, Union[str, int]]]:
+        messages = await self.telegram_provider.get_dialog_messages(
+            dialog_type,
+            dialog_id
+        )
+
+        result = []
+        for message in messages:
+            formatted_date = message.created_at \
+                .strftime("%d/%m/%Y, ""%H:%M:%S")
+
+            result.append(dict(
+                created_at=formatted_date,
+                sender_id=message.sender_id,
+                text=message.text,
+            ))
+
+        return list(reversed(result))

@@ -143,3 +143,34 @@ class TelegramGetUserDialogsView(View):
         except BaseException as error:
             return jsonify(str(error)), 400
 
+
+class TelegramGetDialogMessagesView(View):
+    service = Service = attr(Service)
+
+    def dispatch_request(self):
+        data = request.json
+
+        dialog_type = data.get('dialog_type')
+        dialog_id = data.get('dialog_id')
+
+        if not dialog_type:
+            return jsonify('Dialog type is required'), 400
+
+        if not dialog_id:
+            return jsonify('Dialog id is required'), 400
+
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            messages = loop.run_until_complete(
+                self.service.get_dialog_messages(
+                    dialog_type,
+                    dialog_id
+                )
+            )
+
+            return jsonify(messages), 200
+        except BaseException as error:
+            return jsonify(str(error)), 400
+
+
