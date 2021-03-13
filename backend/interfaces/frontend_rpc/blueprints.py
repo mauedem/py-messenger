@@ -49,3 +49,9 @@ auth_blueprint.add_url_rule(
         'telegram_get_dialog_messages_view'
     )
 )
+auth_blueprint.add_url_rule(
+    '/send_message/', methods=['POST'],
+    view_func=views.TelegramSendMessageView.as_view(
+        'telegram_send_messages_view'
+    )
+)

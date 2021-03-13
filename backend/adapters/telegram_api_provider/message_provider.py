@@ -13,6 +13,8 @@ from config import (API_ID, API_HASH)
 
 
 class TelegramMessageProvider(IMessageProvider):
+    current_user = None
+
     async def authorize_user(self, phone_number: str, password: str = None,
                              code: str = None) -> TelegramUser:
         client = TelegramClient('user-session', API_ID, API_HASH)
@@ -31,13 +33,15 @@ class TelegramMessageProvider(IMessageProvider):
 
         user = await client.get_me()
 
-        return TelegramUser(
+        self.current_user = TelegramUser(
             id=user.id,
             first_name=user.first_name,
             last_name=user.last_name,
             username=user.username,
             phone=user.phone,
         )
+
+        return self.current_user
 
     async def get_user_dialogs(self) -> list[TelegramDialog]:
         session_key = os.environ.get('SESSION_KEY')
@@ -142,5 +146,25 @@ class TelegramMessageProvider(IMessageProvider):
 
         return result
 
-    def send_message(self, message: Message):
-        pass
+    async def send_message(self, receiver_id: str, message: str) -> Message:
+        session_key = os.environ.get('SESSION_KEY')
+        if not session_key:
+            with open('session.txt', 'r') as txt_file:
+                session_key = txt_file.read()
+
+        client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
+        await client.connect()
+
+        entity = await client.get_input_entity(int(receiver_id))
+
+        message = await client.send_message(
+            entity=entity,
+            message=message
+        )
+
+        return Message(
+            id=message.id,
+            sender_id=self.current_user.id,
+            text=message.message,
+            created_at=message.date
+        )

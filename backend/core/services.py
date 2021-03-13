@@ -73,6 +73,7 @@ class Service:
                 id=telegram_user.id,
                 first_name=telegram_user.first_name,
                 last_name=telegram_user.last_name,
+                username=telegram_user.username,
                 phone=telegram_user.phone
             )
         except BaseException as error:
@@ -139,8 +140,7 @@ class Service:
 
         result = []
         for message in messages:
-            formatted_date = message.created_at \
-                .strftime("%d/%m/%Y, ""%H:%M:%S")
+            formatted_date = message.created_at.strftime("%d/%m/%Y, ""%H:%M:%S")
 
             result.append(dict(
                 id=message.id,
@@ -150,3 +150,19 @@ class Service:
             ))
 
         return list(reversed(result))
+
+    async def send_message(self, receiver_id: str, message: str) -> \
+            dict[str, Union[str, int]]:
+        message = await self.telegram_provider.send_message(
+            receiver_id,
+            message
+        )
+
+        formatted_date = message.created_at.strftime("%d/%m/%Y, ""%H:%M:%S")
+
+        return dict(
+            id=message.id,
+            created_at=formatted_date,
+            sender_id=message.sender_id,
+            text=message.text,
+        )

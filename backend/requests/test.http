@@ -1,7 +1,7 @@
-POST http://localhost/private_api/tg/messages/
+POST http://localhost/private_api/tg/send_message/
 Content-Type: application/json
 
 {
-    "dialog_id": "270519216",
-    "offset": "30"
+    "receiver_id": "270519216",
+    "message": "ха-ха, теперь pymessanger умеет отправлять сообщеньки :)"
 }

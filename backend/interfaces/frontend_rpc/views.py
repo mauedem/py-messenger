@@ -165,3 +165,28 @@ class TelegramGetDialogMessagesView(View):
             return jsonify(str(error)), 400
 
 
+class TelegramSendMessageView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        data = request.json
+
+        receiver_id = data.get('receiver_id')
+        message = data.get('message')
+
+        if not receiver_id:
+            return jsonify('Receiver id is required'), 400
+
+        if not message:
+            return jsonify('Message is required'), 400
+
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            message = loop.run_until_complete(
+                self.service.send_message(**data)
+            )
+
+            return jsonify(message), 200
+        except BaseException as error:
+            return jsonify(str(error)), 400
