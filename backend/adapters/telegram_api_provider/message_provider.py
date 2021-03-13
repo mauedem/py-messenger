@@ -13,7 +13,23 @@ from config import (API_ID, API_HASH)
 
 
 class TelegramMessageProvider(IMessageProvider):
-    current_user = None
+    # current_user = None
+    current_user = TelegramUser(
+        id=412300498,
+        first_name='Eryn',
+        last_name='Drem',
+        username='eryndrem',
+        phone='79530490707',
+    )
+
+    @staticmethod
+    def get_authorized_user_session():
+        session_key = os.environ.get('SESSION_KEY')
+        if not session_key:
+            with open('session.txt', 'r') as txt_file:
+                session_key = txt_file.read()
+
+        return TelegramClient(StringSession(session_key), API_ID, API_HASH)
 
     async def authorize_user(self, phone_number: str, password: str = None,
                              code: str = None) -> TelegramUser:
@@ -44,12 +60,7 @@ class TelegramMessageProvider(IMessageProvider):
         return self.current_user
 
     async def get_user_dialogs(self) -> list[TelegramDialog]:
-        session_key = os.environ.get('SESSION_KEY')
-        if not session_key:
-            with open('session.txt', 'r') as txt_file:
-                session_key = txt_file.read()
-
-        client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
+        client = self.get_authorized_user_session()
         await client.connect()
 
         dialogs = await client.get_dialogs()
@@ -106,12 +117,7 @@ class TelegramMessageProvider(IMessageProvider):
 
     async def get_dialog_messages(self, dialog_id: str, offset: str,
                                   limit: str) -> list[Message]:
-        session_key = os.environ.get('SESSION_KEY')
-        if not session_key:
-            with open('session.txt', 'r') as txt_file:
-                session_key = txt_file.read()
-
-        client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
+        client = self.get_authorized_user_session()
         await client.connect()
 
         entity = await client.get_input_entity(int(dialog_id))
@@ -147,12 +153,7 @@ class TelegramMessageProvider(IMessageProvider):
         return result
 
     async def send_message(self, receiver_id: str, message: str) -> Message:
-        session_key = os.environ.get('SESSION_KEY')
-        if not session_key:
-            with open('session.txt', 'r') as txt_file:
-                session_key = txt_file.read()
-
-        client = TelegramClient(StringSession(session_key), API_ID, API_HASH)
+        client = self.get_authorized_user_session()
         await client.connect()
 
         entity = await client.get_input_entity(int(receiver_id))
