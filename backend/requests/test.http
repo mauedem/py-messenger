@@ -1,6 +1,7 @@
-GET http://localhost/private_api/tg/dialogs/
+POST http://localhost/private_api/tg/messages/
 Content-Type: application/json
 
 {
-    "dialog_id": "149083860"
+    "dialog_id": "270519216",
+    "offset": "30"
 }

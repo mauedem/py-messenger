@@ -61,7 +61,7 @@ class Service:
 
     # Telegram methods
     async def telegram_authorize_user(self, phone_number: str, password: str,
-                                code: str = None) -> dict:
+                                      code: str = None) -> dict:
         try:
             telegram_user = await self.telegram_provider.authorize_user(
                 phone_number=phone_number,
@@ -128,9 +128,14 @@ class Service:
 
         return result
 
-    async def get_dialog_messages(self, dialog_id: str) -> \
+    async def get_dialog_messages(self, dialog_id: str, offset: str = 0,
+                                  limit: str = 30) -> \
             list[dict[str, Union[str, int]]]:
-        messages = await self.telegram_provider.get_dialog_messages(dialog_id)
+        messages = await self.telegram_provider.get_dialog_messages(
+            dialog_id,
+            offset,
+            limit
+        )
 
         result = []
         for message in messages:

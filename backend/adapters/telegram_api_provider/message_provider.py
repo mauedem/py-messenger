@@ -100,8 +100,8 @@ class TelegramMessageProvider(IMessageProvider):
 
         return result
 
-    async def get_dialog_messages(self, dialog_id: str) -> \
-            list[Message]:
+    async def get_dialog_messages(self, dialog_id: str, offset: str,
+                                  limit: str) -> list[Message]:
         session_key = os.environ.get('SESSION_KEY')
         if not session_key:
             with open('session.txt', 'r') as txt_file:
@@ -114,7 +114,8 @@ class TelegramMessageProvider(IMessageProvider):
 
         messages = await client.get_messages(
             entity=entity,
-            limit=30
+            limit=int(limit),
+            add_offset=int(offset)
         )
 
         result = []
