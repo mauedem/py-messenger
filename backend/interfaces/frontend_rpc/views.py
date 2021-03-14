@@ -1,6 +1,6 @@
 import asyncio
 
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, send_file, Response, redirect
 from flask.views import View
 from inject import attr
 
@@ -27,16 +27,13 @@ class CreateUserView(View):
         if not password:
             return jsonify('Password is required'), 400
 
-        try:
-            created_user = self.service.register(
-                username=username,
-                nickname=nickname,
-                password=password
-            )
+        created_user = self.service.register(
+            username=username,
+            nickname=nickname,
+            password=password
+        )
 
-            return jsonify(created_user), 200
-        except BaseException as error:
-            return jsonify(str(error)), 400
+        return jsonify(created_user), 200
 
 
 class AuthorizeUserView(View):
@@ -54,18 +51,15 @@ class AuthorizeUserView(View):
         if not password:
             return jsonify('Password is required'), 400
 
-        try:
-            token = self.service.authorize(
-                login=login,
-                password=password
-            )
+        token = self.service.authorize(
+            login=login,
+            password=password
+        )
 
-            response = make_response(jsonify({'ok': True}), 200)
-            response.set_cookie('token', token)
+        response = make_response(jsonify({'ok': True}), 200)
+        response.set_cookie('token', token)
 
-            return response
-        except BaseException as error:
-            return jsonify(str(error)), 401
+        return response
 
 
 class AuthenticateUserView(View):
@@ -77,12 +71,9 @@ class AuthenticateUserView(View):
         if not token:
             return jsonify('No token'), 401
 
-        try:
-            user = self.service.authenticate(token)
+        user = self.service.authenticate(token)
 
-            return jsonify(user), 200
-        except BaseException as error:
-            return jsonify(str(error)), 401
+        return jsonify(user), 200
 
 
 class LogoutUserView(View):
@@ -112,57 +103,65 @@ class TelegramAuthorizeUserView(View):
         if not password:
             return jsonify('Password is required'), 400
 
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            user = loop.run_until_complete(
-                self.service.telegram_authorize_user(
-                    phone_number,
-                    password,
-                    code
-                )
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        user = loop.run_until_complete(
+            self.service.telegram_authorize_user(
+                phone_number,
+                password,
+                code
             )
+        )
 
-            return jsonify(user), 200
-        except BaseException as error:
-            return jsonify(str(error)), 449
+        return jsonify(user), 200
 
 
 class TelegramGetUserDialogsView(View):
     service: Service = attr(Service)
 
     def dispatch_request(self):
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            dialogs = loop.run_until_complete(
-                self.service.get_user_dialogs()
-            )
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        dialogs = loop.run_until_complete(
+            self.service.get_user_dialogs()
+        )
 
-            return jsonify(dialogs), 200
-        except BaseException as error:
-            return jsonify(str(error)), 400
+        return jsonify(dialogs), 200
 
 
 class TelegramGetDialogMessagesView(View):
-    service = Service = attr(Service)
+    service: Service = attr(Service)
 
     def dispatch_request(self):
-        data = request.json
+        data = request.args.to_dict()
 
         if not data.get('dialog_id'):
             return jsonify('Dialog id is required'), 400
 
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            messages = loop.run_until_complete(
-                self.service.get_dialog_messages(**data)
-            )
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        messages = loop.run_until_complete(
+            self.service.get_dialog_messages(**data)
+        )
 
-            return jsonify(messages), 200
-        except BaseException as error:
-            return jsonify(str(error)), 400
+        return jsonify(messages), 200
+
+
+class TelegramGetPhotoView(View):
+    service: Service = attr(Service)
+
+    def dispatch_request(self):
+        data = request.args.to_dict()
+        file_id = data.get('file_id')
+
+        if not file_id:
+            return jsonify('File id is required'), 400
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        file = self.service.get_photo(**data)
+
+        return redirect(file)
 
 
 class TelegramSendMessageView(View):
@@ -180,13 +179,10 @@ class TelegramSendMessageView(View):
         if not message:
             return jsonify('Message is required'), 400
 
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            message = loop.run_until_complete(
-                self.service.send_message(**data)
-            )
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        message = loop.run_until_complete(
+            self.service.send_message(**data)
+        )
 
-            return jsonify(message), 200
-        except BaseException as error:
-            return jsonify(str(error)), 400
+        return jsonify(message), 200

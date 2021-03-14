@@ -1,6 +1,0 @@
-POST http://localhost/private_api/tg/messages/
-Content-Type: application/json
-
-{
-    "dialog_id": "1667028152"
-}

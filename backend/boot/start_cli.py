@@ -13,6 +13,6 @@ def start_cli():
 @start_cli.command()
 def start_rpc():
     inject.configure(container)
-    app.run()
+    app.run(debug=True)
 
 

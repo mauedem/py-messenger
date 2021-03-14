@@ -1,9 +1,10 @@
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 from inject import attr
 
 from adapters.telegram_api_provider.message_provider import \
     TelegramMessageProvider
+from boot import settings
 from core.entities import TelegramUser, TelegramChannel
 from core.message_provider import IMessageProvider
 from core.repos import IMessengerRepository
@@ -62,31 +63,26 @@ class Service:
     # Telegram methods
     async def telegram_authorize_user(self, phone_number: str, password: str,
                                       code: str = None) -> dict:
-        try:
-            telegram_user = await self.telegram_provider.authorize_user(
-                phone_number=phone_number,
-                password=password,
-                code=code
-            )
+        telegram_user = await self.telegram_provider.authorize_user(
+            phone_number=phone_number,
+            password=password,
+            code=code
+        )
 
-            return dict(
-                id=telegram_user.id,
-                first_name=telegram_user.first_name,
-                last_name=telegram_user.last_name,
-                username=telegram_user.username,
-                phone=telegram_user.phone
-            )
-        except BaseException as error:
-            print(str(error))
-            raise error
+        return dict(
+            id=telegram_user.id,
+            first_name=telegram_user.first_name,
+            last_name=telegram_user.last_name,
+            username=telegram_user.username,
+            phone=telegram_user.phone
+        )
 
     async def get_user_dialogs(self) -> list[dict[str, Any]]:
         dialogs = await self.telegram_provider.get_user_dialogs()
 
         result = []
         for dialog in dialogs:
-            formatted_date = dialog.message.created_at \
-                .strftime("%d/%m/%Y, ""%H:%M:%S")
+            formatted_date = dialog.message.created_at.strftime("%d/%m/%Y, %H:%M:%S")
 
             message = dict(
                 id=dialog.message.id,
@@ -101,7 +97,8 @@ class Service:
                     first_name=dialog.entity.first_name,
                     last_name=dialog.entity.last_name,
                     username=dialog.entity.username,
-                    phone=dialog.entity.phone
+                    phone=dialog.entity.phone,
+                    avatar_id=dialog.entity.avatar_id,
                 )
             elif isinstance(dialog.entity, TelegramChannel):
                 channel_id = str(-100) + str(dialog.entity.id)
@@ -128,6 +125,9 @@ class Service:
             ))
 
         return result
+
+    def get_photo(self, file_id: str) -> Optional[bytes]:
+        return settings.AVATARS_BASE_URL + file_id
 
     async def get_dialog_messages(self, dialog_id: str, offset: str = 0,
                                   limit: str = 30) -> \

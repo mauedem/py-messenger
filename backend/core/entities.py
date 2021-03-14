@@ -20,29 +20,29 @@ class Message:
 
 @dataclass
 class TelegramUser:
-    # TODO добавить аву юзера
     id: int
     first_name: str
     last_name: str
     username: str
     phone: str
+    avatar_id: str
 
 
 @dataclass
 class TelegramChat:
-    # TODO добавить аву чата
     id: int
     title: str
     creator: bool
+    avatar_id: str
 
 
 @dataclass
 class TelegramChannel:
-    # TODO добавить аву канала
     id: int
     title: str
     creator: bool
     username: str
+    avatar_id: str
 
 
 @dataclass

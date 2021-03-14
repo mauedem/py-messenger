@@ -3,6 +3,7 @@ node_modules
 /dist
 requests/
 venv/
+media/
 
 # local env files
 .env.local

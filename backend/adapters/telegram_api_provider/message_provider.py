@@ -1,8 +1,11 @@
+import asyncio
 import os
+from os.path import join
 
 from telethon.sessions import StringSession
-from telethon.tl.types import User, Chat, PeerUser, Channel
+from telethon.tl.types import User, PeerUser, Channel
 
+from boot import settings
 from core.entities import Message, TelegramUser, TelegramDialog, TelegramChat, \
     TelegramChannel
 from core.message_provider import IMessageProvider
@@ -20,6 +23,7 @@ class TelegramMessageProvider(IMessageProvider):
         last_name='Drem',
         username='eryndrem',
         phone='79530490707',
+        avatar_id='',
     )
 
     @staticmethod
@@ -36,6 +40,7 @@ class TelegramMessageProvider(IMessageProvider):
         client = TelegramClient('user-session', API_ID, API_HASH)
 
         session_key = StringSession.save(client.session)
+        print('session_key = ', session_key)
         os.environ['SESSION_KEY'] = session_key
         with open('session.txt', 'w') as txt_file:
             txt_file.write(session_key)
@@ -49,15 +54,29 @@ class TelegramMessageProvider(IMessageProvider):
 
         user = await client.get_me()
 
+        file_id = 'user_avatar.jpg'
+        avatar_path = join(settings.AVATARS_PATH, file_id)
+        print('auth avatar_path = ', avatar_path)
+        asyncio.create_task(self.download_avatar(client, avatar_path, user))
+
         self.current_user = TelegramUser(
             id=user.id,
             first_name=user.first_name,
             last_name=user.last_name,
             username=user.username,
             phone=user.phone,
+            avatar_id=avatar_path,
         )
 
         return self.current_user
+
+    @staticmethod
+    async def download_avatar(client: TelegramClient, avatar_path: str, entity):
+        with open(avatar_path, 'wb') as f:
+            await client.download_profile_photo(
+                entity=entity,
+                file=f,
+            )
 
     async def get_user_dialogs(self) -> list[TelegramDialog]:
         client = self.get_authorized_user_session()
@@ -66,14 +85,22 @@ class TelegramMessageProvider(IMessageProvider):
         dialogs = await client.get_dialogs()
 
         result = []
+        tasks = []
         for dialog in dialogs:
+            file_id = str(dialog.entity.id) + '.jpg'
+            avatar_path = join(settings.AVATARS_PATH, file_id)
+            print('avatar_path = ', avatar_path)
+
+            tasks.append(self.download_avatar(client, avatar_path, dialog.entity))
+
             if isinstance(dialog.entity, User):
                 entity = TelegramUser(
                     id=dialog.entity.id,
                     first_name=dialog.entity.first_name,
                     last_name=dialog.entity.last_name,
                     username=dialog.entity.username,
-                    phone=dialog.entity.phone
+                    phone=dialog.entity.phone,
+                    avatar_id=file_id,
                 )
             elif isinstance(dialog.entity, Channel):
                 entity = TelegramChannel(
@@ -81,12 +108,14 @@ class TelegramMessageProvider(IMessageProvider):
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                     username=dialog.entity.username,
+                    avatar_id=file_id,
                 )
             else:
                 entity = TelegramChat(
                     id=dialog.entity.id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
+                    avatar_id=file_id,
                 )
 
             try:
@@ -112,6 +141,8 @@ class TelegramMessageProvider(IMessageProvider):
                 entity=entity,
                 message=message
             ))
+
+        await asyncio.gather(*tasks)
 
         return result
 
