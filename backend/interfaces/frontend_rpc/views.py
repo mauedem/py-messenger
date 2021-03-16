@@ -1,188 +1,104 @@
-import asyncio
+from typing import Optional
 
-from flask import request, jsonify, make_response, send_file, Response, redirect
-from flask.views import View
-from inject import attr
+from fastapi import Response, Cookie, Depends
+from fastapi_utils.inferring_router import InferringRouter
+from fastapi_utils.cbv import cbv
+from starlette import status
+from starlette.responses import RedirectResponse
 
 from core.services import Service
+from interfaces.frontend_rpc.models import CreateUserModel, AuthorizeUserModel, \
+    TelegramAuthorizeUserModel, TelegramSendMessageModel
+router = InferringRouter()
 
 
-# Auth blueprint
-class CreateUserView(View):
-    service: Service = attr(Service)
+@cbv(router)
+class AppViews:
+    service: Service = Depends(Service)
 
-    def dispatch_request(self):
-        data = request.json
-
-        username = data.get('username')
-        nickname = data.get('nickname')
-        password = data.get('password')
-
-        if not username:
-            return jsonify('Username is required'), 400
-
-        if not nickname:
-            return jsonify('Nickname is required'), 400
-
-        if not password:
-            return jsonify('Password is required'), 400
-
+    @router.post('/private_api/auth/register/')
+    def create_user_view(self, user: CreateUserModel):
         created_user = self.service.register(
-            username=username,
-            nickname=nickname,
-            password=password
+            username=user.username,
+            nickname=user.nickname,
+            password=user.password
         )
 
-        return jsonify(created_user), 200
+        return created_user
 
-
-class AuthorizeUserView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        data = request.json
-
-        login = data.get('login')
-        password = data.get('password')
-
-        if not login:
-            return jsonify('Login is required'), 400
-
-        if not password:
-            return jsonify('Password is required'), 400
-
+    @router.post('/private_api/auth/login/')
+    def authorize_user_view(self, user: AuthorizeUserModel, response: Response):
         token = self.service.authorize(
-            login=login,
-            password=password
+            login=user.login,
+            password=user.password
         )
 
-        response = make_response(jsonify({'ok': True}), 200)
-        response.set_cookie('token', token)
-
+        response.status_code = status.HTTP_200_OK
+        response.set_cookie(key='token', value=token)
         return response
 
-
-class AuthenticateUserView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        token = request.cookies.get('token')
-
-        if not token:
-            return jsonify('No token'), 401
-
+    @router.get('/private_api/auth/authenticate/')
+    def authenticate_user_view(self, token: str = Cookie(None)):
         user = self.service.authenticate(token)
 
-        return jsonify(user), 200
+        return user
 
-
-class LogoutUserView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        response = make_response(jsonify({'ok': True}), 200)
-        response.set_cookie('token', '')
+    @router.post('/private_api/auth/logout/')
+    def logout_user_view(self, response: Response):
+        response.set_cookie(key='token', value='')
+        response.status_code = status.HTTP_200_OK
 
         return response
 
-
-# Telegram blueprint
-class TelegramAuthorizeUserView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        data = request.json
-
-        phone_number = data.get('phone_number')
-        password = data.get('password')
-        code = data.get('code')
-
-        if not phone_number:
-            return jsonify('Phone number is required'), 400
-
-        if not password:
-            return jsonify('Password is required'), 400
-
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        user = loop.run_until_complete(
-            self.service.telegram_authorize_user(
-                phone_number,
-                password,
-                code
-            )
+    @router.post('/private_api/tg/authorize/')
+    async def telegram_authorize_view(self, user: TelegramAuthorizeUserModel):
+        user = await self.service.telegram_authorize_user(
+            phone_number=user.phone_number,
+            password=user.password,
+            code=user.code
         )
 
-        return jsonify(user), 200
+        return user
 
+    @router.get('/private_api/tg/dialogs/')
+    async def telegram_get_user_dialog_view(self):
+        dialogs = await self.service.get_user_dialogs()
 
-class TelegramGetUserDialogsView(View):
-    service: Service = attr(Service)
+        return dialogs, 200
 
-    def dispatch_request(self):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        dialogs = loop.run_until_complete(
-            self.service.get_user_dialogs()
+    @router.get('/private_api/tg/messages/')
+    async def telegram_get_dialog_messages_view(
+            self, dialog_id: str, offset: Optional[str] = None,
+            limit: Optional[str] = None
+    ):
+        data = dict(
+            dialog_id=dialog_id,
+            offset=offset,
+            limit=limit
         )
 
-        return jsonify(dialogs), 200
+        if not data['offset']:
+            data.pop('offset')
 
+        if not data['limit']:
+            data.pop('limit')
 
-class TelegramGetDialogMessagesView(View):
-    service: Service = attr(Service)
+        messages = await self.service.get_dialog_messages(**data)
 
-    def dispatch_request(self):
-        data = request.args.to_dict()
+        return messages
 
-        if not data.get('dialog_id'):
-            return jsonify('Dialog id is required'), 400
+    @router.get('/private_api/tg/get_photo/')
+    def telegram_get_photo_view(self, file_id: str):
+        file = self.service.get_photo(file_id)
+        file_path = f'http://localhost/{file}'
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        messages = loop.run_until_complete(
-            self.service.get_dialog_messages(**data)
+        return RedirectResponse(file_path)
+
+    @router.post('/private_api/tg/send_message/')
+    async def telegram_send_message_view(self, message: TelegramSendMessageModel):
+        message = await self.service.send_message(
+            receiver_id=message.receiver_id,
+            message=message.message,
         )
 
-        return jsonify(messages), 200
-
-
-class TelegramGetPhotoView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        data = request.args.to_dict()
-        file_id = data.get('file_id')
-
-        if not file_id:
-            return jsonify('File id is required'), 400
-
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        file = self.service.get_photo(**data)
-
-        return redirect(file)
-
-
-class TelegramSendMessageView(View):
-    service: Service = attr(Service)
-
-    def dispatch_request(self):
-        data = request.json
-
-        receiver_id = data.get('receiver_id')
-        message = data.get('message')
-
-        if not receiver_id:
-            return jsonify('Receiver id is required'), 400
-
-        if not message:
-            return jsonify('Message is required'), 400
-
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        message = loop.run_until_complete(
-            self.service.send_message(**data)
-        )
-
-        return jsonify(message), 200
+        return message

@@ -1,8 +1,7 @@
-from flask import Flask
+from fastapi import FastAPI
 
-from interfaces.frontend_rpc.blueprints import auth_blueprint, tg_blueprint
+from interfaces.frontend_rpc.views import router
 
-app = Flask(__name__)
+app = FastAPI()
 
-app.register_blueprint(auth_blueprint)
-app.register_blueprint(tg_blueprint)
+app.include_router(router)
