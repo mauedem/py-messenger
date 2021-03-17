@@ -52,10 +52,19 @@ class Service:
             username = username_dict['username']
             user = self.repo.get_user_by_username(username)
 
+            # TODO убрать хардкод на telegram_credentials
             return dict(
                 username=user.username,
                 nickname=user.nickname,
-                password=user.password
+                password=user.password,
+                telegram_credentials=dict(
+                    id=412300498,
+                    first_name='Eryn',
+                    last_name='Drem',
+                    username='eryndrem',
+                    phone='79530490707',
+                    avatar_id='user_avatar.jpg'
+                )
             )
         except BaseException as error:
             raise error
@@ -74,7 +83,8 @@ class Service:
             first_name=telegram_user.first_name,
             last_name=telegram_user.last_name,
             username=telegram_user.username,
-            phone=telegram_user.phone
+            phone=telegram_user.phone,
+            avatar_id=telegram_user.avatar_id
         )
 
     async def get_user_dialogs(self) -> list[dict[str, Any]]:

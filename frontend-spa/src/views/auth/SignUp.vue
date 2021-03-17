@@ -249,6 +249,8 @@ export default {
 
                 this.isUserRegisteredSuccessfully = true
             } catch (err) {
+                console.log(err)
+
                 this.isUserExistsError = true
             }
         },

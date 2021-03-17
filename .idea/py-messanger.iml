@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/frontend-spa" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/httpRequests" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/requests" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (py-messenger)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -18,7 +18,7 @@ class AuthorizeUserModel(BaseModel):
 # TG models
 class TelegramAuthorizeUserModel(BaseModel):
     phone_number: str
-    password: str
+    password: Optional[str] = None
     code: Optional[str] = None
 
 

@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import transport from './plugins/transport'
-import Vuelidate from 'vuelidate';
+import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 

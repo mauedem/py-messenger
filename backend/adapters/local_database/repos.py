@@ -1,4 +1,4 @@
-from core.entities import User
+from core.entities import User, TelegramUser
 from core.repos import IMessengerRepository
 from core.tokenizer import hash_password
 

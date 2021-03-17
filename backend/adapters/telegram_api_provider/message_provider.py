@@ -56,7 +56,6 @@ class TelegramMessageProvider(IMessageProvider):
 
         file_id = 'user_avatar.jpg'
         avatar_path = join(settings.AVATARS_PATH, file_id)
-        print('auth avatar_path = ', avatar_path)
         asyncio.create_task(self.download_avatar(client, avatar_path, user))
 
         self.current_user = TelegramUser(
@@ -89,7 +88,6 @@ class TelegramMessageProvider(IMessageProvider):
         for dialog in dialogs:
             file_id = str(dialog.entity.id) + '.jpg'
             avatar_path = join(settings.AVATARS_PATH, file_id)
-            print('avatar_path = ', avatar_path)
 
             tasks.append(self.download_avatar(client, avatar_path, dialog.entity))
 

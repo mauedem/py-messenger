@@ -21,7 +21,7 @@ export default {
                 throw new Error(`Bad response: ${response.status}`)
             }
 
-            return response.json()
+            return response
         }
 
         Vue.prototype.$transport.authorizeUser = async function (/** @type {object} */ user) {
@@ -35,24 +35,15 @@ export default {
                 body: JSON.stringify(user)
             })
 
-            console.log('response = ', response)
-
             if (!response.ok) {
                 throw new Error(`Bad response: ${response.status}`)
             }
-
-            return response.json()
         }
 
         Vue.prototype.$transport.getAuthorizedUser = async function () {
             const url = `${baseUrl}/auth/authenticate/`
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                }
-            })
+            const response = await fetch(url)
 
             if (!response.ok) {
                 throw new Error(`Bad response: ${response.status}`)
@@ -74,6 +65,27 @@ export default {
             if (!response.ok) {
                 throw new Error(`Bad response: ${response.status}`)
             }
+        }
+
+        Vue.prototype.$transport.authorizeTelegramUser = async function (/** @type {object} */ user) {
+            const url = `${baseUrl}/tg/authorize/`
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(user)
+            })
+
+            console.log('response = ', response)
+
+            if (!response.ok) {
+                console.log(response.status)
+                throw new Error(`${response.status}`)
+            }
+
+            return response.json()
         }
     }
 }

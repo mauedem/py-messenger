@@ -4,11 +4,12 @@ from fastapi import Response, Cookie, Depends
 from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
 from starlette import status
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, JSONResponse
 
 from core.services import Service
 from interfaces.frontend_rpc.models import CreateUserModel, AuthorizeUserModel, \
     TelegramAuthorizeUserModel, TelegramSendMessageModel
+
 router = InferringRouter()
 
 
@@ -18,24 +19,31 @@ class AppViews:
 
     @router.post('/private_api/auth/register/')
     def create_user_view(self, user: CreateUserModel):
-        created_user = self.service.register(
-            username=user.username,
-            nickname=user.nickname,
-            password=user.password
-        )
+        try:
+            created_user = self.service.register(
+                username=user.username,
+                nickname=user.nickname,
+                password=user.password
+            )
 
-        return created_user
+            return created_user
+        except BaseException as error:
+            return str(error)
 
     @router.post('/private_api/auth/login/')
     def authorize_user_view(self, user: AuthorizeUserModel, response: Response):
-        token = self.service.authorize(
-            login=user.login,
-            password=user.password
-        )
+        try:
+            token = self.service.authorize(
+                login=user.login,
+                password=user.password
+            )
 
-        response.status_code = status.HTTP_200_OK
-        response.set_cookie(key='token', value=token)
-        return response
+            response.status_code = status.HTTP_200_OK
+            response.set_cookie(key='token', value=token)
+
+            return response
+        except BaseException as error:
+            return str(error)
 
     @router.get('/private_api/auth/authenticate/')
     def authenticate_user_view(self, token: str = Cookie(None)):
@@ -52,13 +60,20 @@ class AppViews:
 
     @router.post('/private_api/tg/authorize/')
     async def telegram_authorize_view(self, user: TelegramAuthorizeUserModel):
-        user = await self.service.telegram_authorize_user(
-            phone_number=user.phone_number,
-            password=user.password,
-            code=user.code
-        )
+        try:
+            user = await self.service.telegram_authorize_user(
+                phone_number=user.phone_number,
+                password=user.password,
+                code=user.code
+            )
 
-        return user
+            return user
+        except BaseException as error:
+            message = str(error)
+            response = JSONResponse(content=message)
+            response.status_code = 449
+
+            return response
 
     @router.get('/private_api/tg/dialogs/')
     async def telegram_get_user_dialog_view(self):
@@ -95,7 +110,8 @@ class AppViews:
         return RedirectResponse(file_path)
 
     @router.post('/private_api/tg/send_message/')
-    async def telegram_send_message_view(self, message: TelegramSendMessageModel):
+    async def telegram_send_message_view(self,
+                                         message: TelegramSendMessageModel):
         message = await self.service.send_message(
             receiver_id=message.receiver_id,
             message=message.message,

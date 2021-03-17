@@ -85,9 +85,12 @@ export default {
         async getCurrentUser () {
             try {
                 const user = await this.$transport.getAuthorizedUser()
+                console.log('user = ', user)
 
                 this.$store.commit('SET_CURRENT_USER', user)
             } catch (err) {
+                console.log(err)
+
                 await this.$router.push({ name: 'SignIn' })
             }
         }
