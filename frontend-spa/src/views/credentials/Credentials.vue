@@ -15,11 +15,11 @@
                     color="primary"
                     :size="!isSuccessfullyTelegramAuthorized ? 70 : 100"
                 >
-                    <span
+                    <img
                         v-if="!isSuccessfullyTelegramAuthorized"
-                        class="white--text headline">
-                        ED
-                    </span>
+                        src="http://localhost/media/avatars/777000.jpg"
+                        alt="Avatar"
+                    />
 
                     <img
                         v-else
@@ -68,13 +68,12 @@
                         :is-code-sent="isCodeSent"
                     />
 
-                    <v-btn
+                    <logout-telegram-modal
                         v-else
-                        color="red"
-                        outlined
+                        @logout-telegram="logoutTelegram"
                     >
-                        Выйти
-                    </v-btn>
+
+                    </logout-telegram-modal>
                 </v-card-actions>
             </v-list-item>
 
@@ -102,22 +101,24 @@
                 </v-btn>
             </template>
 
-            <p class="center">Вы успешно вошли в Telegram как
-                {{ getUserName }}
-            </p>
+            <span class="center">
+                {{ getNotificationMessage }}
+            </span>
         </v-snackbar>
     </v-container>
 </template>
 
 <script>
 import AuthTelegramModal from '@/components/credentials/AuthTelegramModal'
+import LogoutTelegramModal from '@/components/credentials/LogoutTelegramModal'
 import { VueMaskFilter } from 'v-mask'
 
 export default {
     name: 'Credentials',
 
     components: {
-        AuthTelegramModal
+        AuthTelegramModal,
+        LogoutTelegramModal
     },
 
     data: () => ({
@@ -149,6 +150,14 @@ export default {
             }
 
             return ''
+        },
+
+        getNotificationMessage () {
+            if (this.isSuccessfullyTelegramAuthorized) {
+                return `Вы успешно вошли в Telegram как ${this.getUserName}`
+            }
+
+            return 'Успешный выход из Telegram'
         }
     },
 
@@ -159,7 +168,6 @@ export default {
     methods: {
         async authorizeTelegram (user) {
             let userCredentials = this.user
-            console.log('userCredentials = ', userCredentials)
 
             if (!user.code) {
                 userCredentials = {
@@ -175,17 +183,11 @@ export default {
                 this.user.code = user.code
             }
 
-            console.log('this.user = ', this.user)
-
             try {
                 user.code ? this.isAuthorizedTelegramLoaded = false
                     : this.isCodeSending = true
 
                 this.user = await this.$transport.authorizeTelegramUser(this.user)
-                console.log('telegramUser = ', this.user)
-
-                localStorage.setItem('telegramUser', JSON.stringify(this.user))
-                this.$store.commit('SET_TELEGRAM_USER', this.user)
 
                 this.isAuthorizedTelegramLoaded = true
                 this.isSuccessfullyNotificationVisible = true
@@ -198,6 +200,20 @@ export default {
                 if (message === '449') {
                     this.isCodeSent = true
                 }
+            }
+        },
+
+        async logoutTelegram () {
+            try {
+                await this.$transport.logoutTelegramUser()
+
+                this.user = {}
+                this.isSuccessfullyTelegramAuthorized = false
+                this.isSuccessfullyNotificationVisible = true
+            } catch (err) {
+                const { message } = err
+
+                console.log(message)
             }
         }
     },

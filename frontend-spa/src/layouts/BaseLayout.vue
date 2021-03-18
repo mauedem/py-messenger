@@ -12,15 +12,15 @@
 
         <v-dialog
             v-model="isConfirmLogoutVisible"
-            width="400"
+            width="340"
         >
             <v-card>
-                <v-card-title class="headline text-no-wrap">
-                    Подтвердить выход
+                <v-card-title>
+                    <span class="headline text-no-wrap">Подтвердить выход</span>
                 </v-card-title>
 
                 <v-card-text class="text-center">
-                    Вы уверены, что хотите разлогиниться?
+                    Вы уверены, что хотите выйти?
                 </v-card-text>
 
                 <v-card-actions class="d-flex">
@@ -85,7 +85,6 @@ export default {
         async getCurrentUser () {
             try {
                 const user = await this.$transport.getAuthorizedUser()
-                console.log('user = ', user)
 
                 this.$store.commit('SET_CURRENT_USER', user)
             } catch (err) {

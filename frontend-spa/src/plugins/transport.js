@@ -78,7 +78,23 @@ export default {
                 body: JSON.stringify(user)
             })
 
-            console.log('response = ', response)
+            if (!response.ok) {
+                console.log(response.status)
+                throw new Error(`${response.status}`)
+            }
+
+            return response.json()
+        }
+
+        Vue.prototype.$transport.logoutTelegramUser = async function () {
+            const url = `${baseUrl}/tg/logout/`
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
+            })
 
             if (!response.ok) {
                 console.log(response.status)

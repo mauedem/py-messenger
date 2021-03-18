@@ -5,13 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        currentUser: {},
+        currentUser: {}
     },
 
     mutations: {
         SET_CURRENT_USER (state, currentUser) {
             state.currentUser = currentUser
-            console.log(state.currentUser)
         }
     }
 })

@@ -177,16 +177,6 @@ export default {
         }
     },
 
-    watch: {
-        isCodeSending (newVal) {
-            console.log('isCodeSending newVal = ', newVal)
-        },
-
-        isCodeSent (newVal) {
-            console.log('isCodeSent newVal = ', newVal)
-        }
-    },
-
     computed: {
         phoneNumberErrors () {
             const errors = []
@@ -212,7 +202,6 @@ export default {
             const errors = []
 
             if (!this.$v.form.code.$dirty) return errors
-            console.log('this.$v.form.code = ', this.$v.form.code.$dirty)
             !this.$v.form.code.requiredIf &&
                 errors.push('Это поле обязательно для заполнения')
 
@@ -237,8 +226,6 @@ export default {
             this.$nextTick(() => {
                 this.$v.$reset()
             })
-
-            console.log('this.form = ', this.form)
         },
 
         closeDialog () {
