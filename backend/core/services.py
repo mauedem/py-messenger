@@ -176,3 +176,6 @@ class Service:
             sender_id=message.sender_id,
             text=message.text,
         )
+
+    async def telegram_logout(self):
+        return await self.telegram_provider.logout()

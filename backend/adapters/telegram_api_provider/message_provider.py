@@ -198,3 +198,9 @@ class TelegramMessageProvider(IMessageProvider):
             text=message.message,
             created_at=message.date
         )
+
+    async def logout(self):
+        client = self.get_authorized_user_session()
+        await client.connect()
+
+        return await client.log_out()

@@ -118,3 +118,21 @@ class AppViews:
         )
 
         return message
+
+    @router.post('/private_api/tg/logout/')
+    async def telegram_logout_view(self):
+        is_user_logout = await self.service.telegram_logout()
+        print('is_user_logout = ', is_user_logout)
+
+        if is_user_logout:
+            message = 'User successfully logout'
+            response = JSONResponse(content=message)
+            response.status_code = 200
+
+            return response
+
+        message = 'User successfully logout'
+        response = JSONResponse(content=message)
+        response.status_code = 418
+
+        return response

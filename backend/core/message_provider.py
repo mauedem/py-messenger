@@ -17,3 +17,6 @@ class IMessageProvider(ABC):
 
     @abstractmethod
     async def send_message(self, receiver_id: str, message: str) -> Message: ...
+
+    @abstractmethod
+    async def logout(self) -> bool: ...
