@@ -72,10 +72,13 @@ class TelegramMessageProvider(IMessageProvider):
     @staticmethod
     async def download_avatar(client: TelegramClient, avatar_path: str, entity):
         with open(avatar_path, 'wb') as f:
-            await client.download_profile_photo(
+            is_exist = await client.download_profile_photo(
                 entity=entity,
                 file=f,
+
             )
+        if not is_exist:
+            os.remove(avatar_path)
 
     async def get_user_dialogs(self) -> list[TelegramDialog]:
         client = self.get_authorized_user_session()

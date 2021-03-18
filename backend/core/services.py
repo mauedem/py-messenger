@@ -1,5 +1,7 @@
+import datetime
 from typing import Any, Union, Optional
 
+import pytz as pytz
 from inject import attr
 
 from adapters.telegram_api_provider.message_provider import \
@@ -9,6 +11,8 @@ from core.entities import TelegramUser, TelegramChannel
 from core.message_provider import IMessageProvider
 from core.repos import IMessengerRepository
 from core.tokenizer import generate_jwt_token, decode_jwt_token
+
+from config import (TELEGRAM_TIMEZONE, LOCAL_TIMEZONE)
 
 
 class Service:
@@ -92,7 +96,29 @@ class Service:
 
         result = []
         for dialog in dialogs:
-            formatted_date = dialog.message.created_at.strftime("%d/%m/%Y, %H:%M:%S")
+            message_created_at = dialog.message.created_at
+            current_date_and_time = datetime.datetime.now()
+
+            local_timezone = pytz.timezone(LOCAL_TIMEZONE)
+            telegram_timezone = pytz.timezone(TELEGRAM_TIMEZONE)
+            localized_message_timestamp = message_created_at.replace(
+                tzinfo=telegram_timezone
+            ).astimezone(local_timezone)
+
+            current_date_delta = datetime.timedelta(
+                days=current_date_and_time.day,
+                hours=current_date_and_time.hour
+            )
+            localized_message_timestamp_delta = datetime.timedelta(
+                days=localized_message_timestamp.day,
+                hours=localized_message_timestamp.hour
+            )
+            difference = current_date_delta - localized_message_timestamp_delta
+
+            if not difference.days and difference.seconds//3600 <= current_date_and_time.hour:
+                formatted_date = localized_message_timestamp.strftime("%H:%M")
+            else:
+                formatted_date = localized_message_timestamp.strftime("%d.%m.%Y")
 
             message = dict(
                 id=dialog.message.id,
@@ -117,7 +143,8 @@ class Service:
                     id=channel_id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
-                    username=dialog.entity.username
+                    username=dialog.entity.username,
+                    avatar_id=dialog.entity.avatar_id,
                 )
             else:
                 chat_id = -dialog.entity.id
@@ -126,6 +153,7 @@ class Service:
                     id=chat_id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
+                    avatar_id=dialog.entity.avatar_id,
                 )
 
             result.append(dict(
@@ -150,7 +178,7 @@ class Service:
 
         result = []
         for message in messages:
-            formatted_date = message.created_at.strftime("%d/%m/%Y, ""%H:%M:%S")
+            formatted_date = message.created_at.strftime("%d.%m.%Y, ""%H:%M")
 
             result.append(dict(
                 id=message.id,
