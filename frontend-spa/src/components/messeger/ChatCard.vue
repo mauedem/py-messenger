@@ -144,11 +144,16 @@
                     </v-tooltip>
                 </div>
 
-                <!-- TODO чекать медиа в сообщении -->
                 <v-list-item-subtitle
                     class="text-truncate ml-2"
                 >
-                    {{ dialog.message.text }}
+                    <span v-if="hasMedia">{{ dialog.message.text }}</span>
+                    <div class="d-flex align-center ml-n1"
+                        v-else>
+                        <svg-icon icon-name="picture">
+                        </svg-icon>
+                        Изображение
+                    </div>
                 </v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
@@ -174,6 +179,12 @@ export default {
 
     data: () => ({
         hasAvatar: true
-    })
+    }),
+
+    computed: {
+        hasMedia () {
+            return !!this.dialog.message.text
+        }
+    }
 }
 </script>
