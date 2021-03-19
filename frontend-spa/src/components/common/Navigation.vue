@@ -1,9 +1,11 @@
 <template>
     <v-navigation-drawer
         app
-        class="pt-4 elevation-2"
+        class="elevation-2"
+        :class="isNavigationOpen ? 'pt-5' : 'pt-4'"
         mini-variant-width="80"
         width="280"
+        height="100%"
         :mini-variant.sync="isNavigationOpen"
     >
         <v-list-item class="pl-2 pr-0">
@@ -19,7 +21,7 @@
                 <v-list-item-title class="title text-h5">
                     PyMessenger
                 </v-list-item-title>
-                <v-list-item-subtitle class="mt-1">
+                <v-list-item-subtitle class="pt-1">
                     Universal messaging <br> application
                 </v-list-item-subtitle>
             </div>
@@ -33,7 +35,7 @@
             </v-btn>
         </v-list-item>
 
-        <v-divider class="mt-3"/>
+<!--        <v-divider class="mt-3"/>-->
 
         <v-list-item class="d-flex align-center mt-3 pl-2 pr-0">
             <v-avatar
@@ -80,9 +82,11 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list-item-group>
+        </v-list>
 
+        <template v-slot:append>
             <v-list-item
-                class="navigation__item mt-auto"
+                class="navigation__item mt-auto mb-2"
                 @click="showConfirmLogoutModal"
                 link
             >
@@ -96,10 +100,11 @@
                 </v-list-item-icon>
 
                 <v-list-item-content>
-                    <v-list-item-title style="font-size: 14px">Выход</v-list-item-title>
+                    <v-list-item-title style="font-size: 14px">Выход
+                    </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-        </v-list>
+        </template>
     </v-navigation-drawer>
 </template>
 
