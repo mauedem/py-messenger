@@ -4,7 +4,10 @@
             cols="4"
             class="pb-0"
         >
-            <chats />
+            <chats
+                :are-dialods-loading="areDialogsLoading"
+                :dialogs="dialogs"
+            />
         </v-col>
 
         <v-col
@@ -38,7 +41,32 @@ export default {
     },
 
     data: () => ({
-        noDialogSelected: true
-    })
+        noDialogSelected: true,
+
+        areDialogsLoading: false,
+
+        dialogs: []
+    }),
+
+    methods: {
+        async getTelegramDialogs () {
+            try {
+                this.areDialogsLoading = true
+
+                const dialogs = await this.$transport.getTelegramDialogs()
+                console.log('dialogs = ', dialogs)
+                this.dialogs = dialogs[0]
+            } catch (err) {
+                const { message } = err
+                console.log(message)
+            } finally {
+                this.areDialogsLoading = false
+            }
+        }
+    },
+
+    created () {
+        this.getTelegramDialogs()
+    }
 }
 </script>

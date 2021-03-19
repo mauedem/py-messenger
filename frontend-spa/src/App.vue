@@ -5,7 +5,9 @@
         </auth-page-layout>
 
         <base-layout v-else>
-            <router-view/>
+            <keep-alive>
+                <router-view/>
+            </keep-alive>
         </base-layout>
     </v-app>
 </template>

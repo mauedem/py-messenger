@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-center align-center"
         style="width: 100%; height: 100%">
-        <p class="text-center body-1"
+        <p class="text-h6 font-weight-regular"
             style="font-size: 14px">
             Чтобы начать, выберите чат
         </p>

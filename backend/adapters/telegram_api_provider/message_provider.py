@@ -89,6 +89,7 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for dialog in dialogs:
+            print('DIALOG = ', dialog)
             file_id = str(dialog.entity.id) + '.jpg'
             avatar_path = join(settings.AVATARS_PATH, file_id)
 

@@ -1,4 +1,4 @@
-import { baseUrl } from '@/config'
+import { baseUrl, staticUrl } from '@/config'
 
 import Vue from 'vue'
 
@@ -95,6 +95,19 @@ export default {
                     'Content-Type': 'application/json;charset=utf-8'
                 }
             })
+
+            if (!response.ok) {
+                console.log(response.status)
+                throw new Error(`${response.status}`)
+            }
+
+            return response.json()
+        }
+
+        Vue.prototype.$transport.getTelegramDialogs = async function () {
+            const url = `${baseUrl}/tg/dialogs/`
+
+            const response = await fetch(url)
 
             if (!response.ok) {
                 console.log(response.status)

@@ -166,7 +166,7 @@ export default {
     },
 
     methods: {
-        async authorizeTelegram (user) {
+        async authorizeTelegram (/** @type {object} */ user) {
             let userCredentials = this.user
 
             if (!user.code) {
