@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div @click="selectChat">
         <v-divider
             :inset="true"
         ></v-divider>
@@ -184,6 +184,12 @@ export default {
     computed: {
         hasMedia () {
             return !!this.dialog.message.text
+        }
+    },
+
+    methods: {
+        selectChat () {
+            this.$emit('select-chat', this.dialog)
         }
     }
 }

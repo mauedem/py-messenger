@@ -37,13 +37,16 @@
 
 <!--        <v-divider class="mt-3"/>-->
 
-        <v-list-item class="d-flex align-center mt-3 pl-2 pr-0">
+        <v-list-item
+            v-if="currentUser"
+            class="d-flex align-center mt-3 pl-2 pr-0">
             <v-avatar
                 class="mr-3"
                 color="primary"
                 size="60"
             >
-                <span class="white--text headline">ED</span>
+                <span class="white--text headline">
+                    {{ getCurrentUserAvatar }}</span>
             </v-avatar>
 
             <div class="d-inline-block mr-auto">
@@ -58,8 +61,11 @@
             nav
             class="navigation"
         >
-            <v-list-item-group v-model="selectedItem"
-                               color="primary">
+            <v-list-item-group
+                v-model="selectedItem"
+                mandatory
+                color="primary"
+            >
                 <v-list-item
                     v-for="item in items"
                     :key="item.title"
@@ -135,13 +141,17 @@ export default {
                 icon: 'mdi-view-dashboard',
                 routeName: 'Credentials'
             },
-            { title: 'Настройки', icon: 'mdi-cog' }
+            // { title: 'Настройки', icon: 'mdi-cog' }
         ]
     }),
 
     computed: {
         currentUser () {
             return this.$store.state.currentUser
+        },
+
+        getCurrentUserAvatar () {
+            return this.currentUser.nickname[0].toUpperCase()
         }
     },
 

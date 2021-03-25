@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 
 @dataclass
@@ -10,12 +10,14 @@ class User:
     password: str
 
 
+# TODO добавить булеанку о том, переслано ли сообщение
 @dataclass
 class Message:
     id: int
     sender_id: int
     text: str
     created_at: datetime
+    media: Optional[str]
 
 
 @dataclass

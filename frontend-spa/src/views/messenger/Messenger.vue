@@ -5,8 +5,10 @@
             class="pb-0"
         >
             <chats
+                @get-telegram-dialogs="getTelegramDialogs"
                 :are-dialods-loading="areDialogsLoading"
                 :dialogs="dialogs"
+                @select-chat="getChatMessages"
             />
         </v-col>
 
@@ -21,7 +23,10 @@
             v-else
             cols="8"
         >
-            <dialogs />
+            <Dialog
+                :dialog="selectedChat"
+                :messages="chatMessages"
+            />
         </v-col>
     </v-row>
 </template>
@@ -29,7 +34,7 @@
 <script>
 import Chats from '@/components/messeger/Chats'
 import NoDialog from '@/components/messeger/NoDialog'
-import Dialogs from '@/components/messeger/Dialogs'
+import Dialog from '@/components/messeger/Dialog'
 
 export default {
     name: 'Messenger',
@@ -37,7 +42,7 @@ export default {
     components: {
         Chats,
         NoDialog,
-        Dialogs
+        Dialog
     },
 
     data: () => ({
@@ -45,7 +50,10 @@ export default {
 
         areDialogsLoading: false,
 
-        dialogs: []
+        dialogs: [],
+
+        selectedChat: null,
+        chatMessages: []
     }),
 
     methods: {
@@ -54,7 +62,6 @@ export default {
                 this.areDialogsLoading = true
 
                 const dialogs = await this.$transport.getTelegramDialogs()
-                console.log('dialogs = ', dialogs)
                 this.dialogs = dialogs[0]
             } catch (err) {
                 const { message } = err
@@ -62,11 +69,22 @@ export default {
             } finally {
                 this.areDialogsLoading = false
             }
+        },
+
+        async getChatMessages (/** @type {object} */ dialog) {
+            this.selectedChat = dialog
+            this.noDialogSelected = false
+
+            try {
+                this.chatMessages = await this.$transport.getDialogMessages(dialog.entity.id)
+            } catch (err) {
+                console.log(err)
+            }
         }
     },
 
-    created () {
-        this.getTelegramDialogs()
-    }
+    // created () {
+    //     this.getTelegramDialogs()
+    // }
 }
 </script>

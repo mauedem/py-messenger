@@ -1,9 +1,11 @@
 <template>
     <div
-        class="elevation-4 overflow-y-auto"
+        class="elevation-4 overflow-y-hidden"
         style="height: 100vh"
     >
-        <v-form class="pt-5 mx-4 mb-n7">
+        <v-form
+            class="pt-5 mx-4 mb-n7"
+        >
             <v-text-field
                 outlined
                 height="20"
@@ -12,6 +14,10 @@
 
             </v-text-field>
         </v-form>
+
+        <v-btn @click="getTelegramDialogs">
+            Получить диалоги
+        </v-btn>
 
         <div
             v-if="areDialodsLoading"
@@ -31,7 +37,7 @@
         </div>
 
         <div
-            v-show="!areDialodsLoading && !dialogs"
+            v-show="!areDialodsLoading && !dialogs.length"
             class="mt-5"
         >
             <p class="text-h6 font-weight-regular text-center">
@@ -45,21 +51,26 @@
             </p>
         </div>
 
-        <v-list
-            two-line
-        >
-            <v-list-item-group
-                v-model="selectedChat"
-                color="primary"
+        <div style="overflow: scroll; height: 87%">
+            <v-list
+                class="overflow-y-auto"
+                two-line
             >
-                <template v-for="(dialog, index) in dialogs">
-                    <chat-card
-                        :dialog="dialog"
-                        :key="index"
-                    />
-                </template>
-            </v-list-item-group>
-        </v-list>
+                <v-list-item-group
+                    v-model="selectedChat"
+                    color="primary"
+                    mandatory
+                >
+                    <template v-for="(dialog, index) in dialogs">
+                        <chat-card
+                            @select-chat="selectChat(dialog)"
+                            :dialog="dialog"
+                            :key="index"
+                        />
+                    </template>
+                </v-list-item-group>
+            </v-list>
+        </div>
     </div>
 </template>
 
@@ -87,6 +98,18 @@ export default {
 
     data: () => ({
         selectedChat: null
-    })
+    }),
+
+    methods: {
+        selectChat (/** @type {object} */ dialog) {
+            console.log('dialog = ', dialog)
+            this.$emit('select-chat', dialog)
+        },
+
+        // TODO убрать заглушку
+        getTelegramDialogs () {
+            this.$emit('get-telegram-dialogs')
+        }
+    }
 }
 </script>

@@ -170,6 +170,7 @@ class Service:
     async def get_dialog_messages(self, dialog_id: str, offset: str = 0,
                                   limit: str = 30) -> \
             list[dict[str, Union[str, int]]]:
+        # TODO подумать, каким образом выводить дату сообщения
         messages = await self.telegram_provider.get_dialog_messages(
             dialog_id,
             offset,
@@ -178,13 +179,21 @@ class Service:
 
         result = []
         for message in messages:
-            formatted_date = message.created_at.strftime("%d.%m.%Y, ""%H:%M")
+            message_created_at = message.created_at
+            local_timezone = pytz.timezone(LOCAL_TIMEZONE)
+            telegram_timezone = pytz.timezone(TELEGRAM_TIMEZONE)
+            localized_message_timestamp = message_created_at.replace(
+                tzinfo=telegram_timezone
+            ).astimezone(local_timezone)
+
+            formatted_date = localized_message_timestamp.strftime("%d.%m.%Y, ""%H:%M")
 
             result.append(dict(
                 id=message.id,
                 created_at=formatted_date,
                 sender_id=message.sender_id,
                 text=message.text,
+                media=message.media
             ))
 
         return list(reversed(result))

@@ -134,7 +134,8 @@ class TelegramMessageProvider(IMessageProvider):
                 id=dialog.message.id,
                 sender_id=sender_id,
                 text=dialog.message.message,
-                created_at=dialog.message.date
+                created_at=dialog.message.date,
+                media=None
             )
 
             result.append(TelegramDialog(
@@ -146,6 +147,19 @@ class TelegramMessageProvider(IMessageProvider):
         await asyncio.gather(*tasks)
 
         return result
+
+    # TODO сделать загрузку, видео, стикеров и прочих документов
+    @staticmethod
+    async def download_message_media(client: TelegramClient, media_path: str,
+                                     message):
+        # TODO подумать насчет видео
+        with open(media_path, 'wb') as f:
+            is_exist = await client.download_media(
+                message=message,
+                file=f,
+            )
+        if not is_exist:
+            os.remove(media_path)
 
     async def get_dialog_messages(self, dialog_id: str, offset: str,
                                   limit: str) -> list[Message]:
@@ -161,7 +175,20 @@ class TelegramMessageProvider(IMessageProvider):
         )
 
         result = []
+        tasks = []
         for message in messages:
+            print('MESSAGE = ', message)
+            file_id = None
+
+            # TODO переделать загрузку с медия не только на фото
+            if message.media:
+                file_id = str(message.id) + '.jpg'
+                media_path = join(settings.MEDIA_PATH, file_id)
+
+                tasks.append(self.download_message_media(
+                    client, media_path, message
+                ))
+
             try:
                 if isinstance(message.from_id, PeerUser):
                     sender_id = message.from_id.user_id
@@ -177,10 +204,14 @@ class TelegramMessageProvider(IMessageProvider):
                 id=message.id,
                 sender_id=sender_id,
                 text=message.message,
-                created_at=message.date
+                created_at=message.date,
+                media=file_id
             )
 
             result.append(message)
+
+        if tasks:
+            await asyncio.gather(*tasks)
 
         return result
 

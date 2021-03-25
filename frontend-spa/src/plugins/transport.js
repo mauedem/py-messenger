@@ -1,4 +1,4 @@
-import { baseUrl, staticUrl } from '@/config'
+import { baseUrl } from '@/config'
 
 import Vue from 'vue'
 
@@ -79,7 +79,6 @@ export default {
             })
 
             if (!response.ok) {
-                console.log(response.status)
                 throw new Error(`${response.status}`)
             }
 
@@ -97,7 +96,6 @@ export default {
             })
 
             if (!response.ok) {
-                console.log(response.status)
                 throw new Error(`${response.status}`)
             }
 
@@ -110,7 +108,19 @@ export default {
             const response = await fetch(url)
 
             if (!response.ok) {
-                console.log(response.status)
+                throw new Error(`${response.status}`)
+            }
+
+            return response.json()
+        }
+
+        Vue.prototype.$transport.getDialogMessages = async function (/** @type {object} */ dialogId) {
+            /* TODO сделать параметры через params */
+            const url = `${baseUrl}/tg/messages/?dialog_id=${dialogId}`
+
+            const response = await fetch(url)
+
+            if (!response.ok) {
                 throw new Error(`${response.status}`)
             }
 
