@@ -114,9 +114,12 @@ export default {
             return response.json()
         }
 
-        Vue.prototype.$transport.getDialogMessages = async function (/** @type {object} */ dialogId) {
+        Vue.prototype.$transport.getDialogMessages = async function (
+            /** @type {number} */ dialogId,
+            /** @type {string} */ username
+        ) {
             /* TODO сделать параметры через params */
-            const url = `${baseUrl}/tg/messages/?dialog_id=${dialogId}`
+            const url = `${baseUrl}/tg/messages/?dialog_id=${dialogId}&username=${username}`
 
             const response = await fetch(url)
 

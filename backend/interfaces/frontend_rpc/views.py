@@ -83,11 +83,12 @@ class AppViews:
 
     @router.get('/private_api/tg/messages/')
     async def telegram_get_dialog_messages_view(
-            self, dialog_id: str, offset: Optional[str] = None,
-            limit: Optional[str] = None
+            self, dialog_id: str, username: Optional[str] = None,
+            offset: Optional[str] = None, limit: Optional[str] = None
     ):
         data = dict(
             dialog_id=dialog_id,
+            username=username,
             offset=offset,
             limit=limit
         )

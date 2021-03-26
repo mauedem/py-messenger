@@ -1,0 +1,8 @@
+POST http://127.0.0.1:5000/private_api/tg/authorize/
+Content-Type: application/json
+
+{
+    "phone_number": "79530490707",
+    "password": "6502779739",
+    "code": "13455"
+}

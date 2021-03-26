@@ -1,0 +1,2 @@
+GET http://localhost/private_api/tg/get_photo/?file_id=user_avatar.jpg
+Content-Type: application/json

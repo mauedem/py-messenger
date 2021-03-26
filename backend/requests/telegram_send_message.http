@@ -1,0 +1,7 @@
+POST http://localhost/private_api/tg/send_message/
+Content-Type: application/json
+
+{
+    "receiver_id": "1667028152",
+    "message": "i love u dear!"
+}

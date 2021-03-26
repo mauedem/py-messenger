@@ -79,7 +79,10 @@ export default {
             try {
                 this.areMessagesLoading = true
 
-                this.chatMessages = await this.$transport.getDialogMessages(dialog.entity.id)
+                this.chatMessages = await this.$transport.getDialogMessages(
+                    dialog.entity.id,
+                    dialog.entity.username
+                )
             } catch (err) {
                 console.log(err)
             } finally {

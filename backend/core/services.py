@@ -167,12 +167,13 @@ class Service:
     def get_photo(self, file_id: str) -> Optional[bytes]:
         return settings.AVATARS_BASE_URL + file_id
 
-    async def get_dialog_messages(self, dialog_id: str, offset: str = 0,
-                                  limit: str = 30) -> \
+    async def get_dialog_messages(self, dialog_id: str, username: Optional[str],
+                                  offset: str = 0, limit: str = 30) -> \
             list[dict[str, Union[str, int]]]:
         # TODO подумать, каким образом выводить дату сообщения
         messages = await self.telegram_provider.get_dialog_messages(
             dialog_id,
+            username,
             offset,
             limit
         )

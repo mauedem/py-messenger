@@ -1,0 +1,3 @@
+GET http://localhost/private_api/tg/dialogs/
+Content-Type: application/json
+

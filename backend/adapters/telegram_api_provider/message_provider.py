@@ -1,6 +1,7 @@
 import asyncio
 import os
 from os.path import join
+from typing import Optional
 
 from telethon.sessions import StringSession
 from telethon.tl.types import User, PeerUser, Channel
@@ -89,6 +90,7 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for dialog in dialogs:
+            print('DIALOG = ', dialog)
             file_id = str(dialog.entity.id) + '.jpg'
             avatar_path = join(settings.AVATARS_PATH, file_id)
 
@@ -161,12 +163,16 @@ class TelegramMessageProvider(IMessageProvider):
         if not is_exist:
             os.remove(media_path)
 
-    async def get_dialog_messages(self, dialog_id: str, offset: str,
-                                  limit: str) -> list[Message]:
+    async def get_dialog_messages(self, dialog_id: str, username: Optional[str],
+                                  offset: str, limit: str) -> list[Message]:
+        print('dialog_id = ', dialog_id)
         client = self.get_authorized_user_session()
         await client.connect()
 
-        entity = await client.get_input_entity(int(dialog_id))
+        try:
+            entity = await client.get_input_entity(int(dialog_id))
+        except ValueError:
+            entity = await client.get_input_entity(username)
 
         messages = await client.get_messages(
             entity=entity,
@@ -177,7 +183,6 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for message in messages:
-            print('MESSAGE = ', message)
             file_id = None
 
             # TODO переделать загрузку с медия не только на фото

@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from typing import Optional
 
 from core.entities import Message, TelegramUser, TelegramDialog
 
@@ -12,8 +13,8 @@ class IMessageProvider(ABC):
     async def get_user_dialogs(self) -> list[TelegramDialog]: ...
 
     @abstractmethod
-    async def get_dialog_messages(self, dialog_id: str, offset: str,
-                                  limit: str) -> list[Message]: ...
+    async def get_dialog_messages(self, dialog_id: str, username: Optional[str],
+                                  offset: str, limit: str) -> list[Message]: ...
 
     @abstractmethod
     async def send_message(self, receiver_id: str, message: str) -> Message: ...
