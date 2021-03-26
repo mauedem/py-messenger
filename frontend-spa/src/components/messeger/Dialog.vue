@@ -83,27 +83,31 @@
         </div>
 
         <div class="mt-auto">
-            <v-textarea
-                style="border-radius: 0; border-left: 1px solid #ccc;
-                font-size: 18px"
-                class="elevation-2 pt-n4"
-                row-height="9"
-                solo
-                hide-details
-                placeholder="Сообщение..."
-                auto-grow
-                v-model="form.message"
+            <div
+                class="pa-0 ma-0"
             >
-                <template #prepend-inner>
-                    <v-file-input
-                        dense
-                        hide-details
-                        class="mt-n3"
-                        hide-input
-                        accept="image/*"
-                    />
-                </template>
-            </v-textarea>
+                <v-textarea
+                    style="border-radius: 0; border-left: 1px solid #ccc;
+                font-size: 18px;"
+                    class="elevation-2 pt-n4"
+                    row-height="9"
+                    solo
+                    hide-details
+                    placeholder="Сообщение..."
+                    auto-grow
+                    v-model="form.message"
+                >
+                    <template #prepend-inner>
+                        <v-file-input
+                            dense
+                            hide-details
+                            class="mt-n3"
+                            hide-input
+                            accept="image/*"
+                        />
+                    </template>
+                </v-textarea>
+            </div>
         </div>
     </div>
 </template>
