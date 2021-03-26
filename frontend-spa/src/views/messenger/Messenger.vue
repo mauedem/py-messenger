@@ -13,10 +13,10 @@
         </v-col>
 
         <v-col
-            v-if="noDialogSelected"
+            v-if="noDialogSelected || areMessagesLoading"
             cols="8"
         >
-            <no-dialog />
+            <no-dialog :are-messages-loading="areMessagesLoading" />
         </v-col>
 
         <v-col
@@ -49,6 +49,7 @@ export default {
         noDialogSelected: true,
 
         areDialogsLoading: false,
+        areMessagesLoading: false,
 
         dialogs: [],
 
@@ -76,9 +77,13 @@ export default {
             this.noDialogSelected = false
 
             try {
+                this.areMessagesLoading = true
+
                 this.chatMessages = await this.$transport.getDialogMessages(dialog.entity.id)
             } catch (err) {
                 console.log(err)
+            } finally {
+                this.areMessagesLoading = false
             }
         }
     },

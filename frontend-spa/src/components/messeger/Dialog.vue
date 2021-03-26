@@ -143,7 +143,7 @@ export default {
     methods: {
         checkIfIAmSender (/** @type {number} */ senderId) {
             return senderId === this.$store.state.currentUser.telegram_credentials.id
-        },
+        }
 
         // getMessageDate (messageDate) {
         //     const dateWithoutTime = messageDate.substr(0, 10)
