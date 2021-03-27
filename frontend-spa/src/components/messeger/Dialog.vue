@@ -56,7 +56,7 @@
         </v-toolbar>
 
         <div
-            style="height: 87vh"
+            :style="getChatHeight"
             class="overflow-y-auto overflow-x-hidden"
         >
 <!--            <div class="d-flex justify-center">-->
@@ -82,7 +82,10 @@
             </div>
         </div>
 
-        <div class="mt-auto">
+        <div
+            v-if="!isChannel || hasAdminRights"
+            class="mt-auto"
+        >
             <div
                 class="pa-0 ma-0"
             >
@@ -152,6 +155,28 @@ export default {
     validations: {
         form: {
             message: { required }
+        }
+    },
+
+    computed: {
+        isChannel () {
+            return this.dialog.entity.type === 'channel'
+        },
+
+        hasAdminRights () {
+            return this.isChannel && this.dialog.entity.admin_rights
+        },
+
+        getChatHeight () {
+            if (!this.isChannel || this.hasAdminRights) {
+                return {
+                    height: '87vh'
+                }
+            }
+
+            return {
+                height: '94vh'
+            }
         }
     },
 

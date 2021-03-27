@@ -106,12 +106,19 @@ class TelegramMessageProvider(IMessageProvider):
                     avatar_id=file_id,
                 )
             elif isinstance(dialog.entity, Channel):
+                admin_rights = False
+                if dialog.entity.admin_rights:
+                    admin_rights = dialog.entity.admin_rights.change_info
+
+                print('admin_rights = ', admin_rights)
+
                 entity = TelegramChannel(
                     id=dialog.entity.id,
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                     username=dialog.entity.username,
                     avatar_id=file_id,
+                    admin_rights=admin_rights
                 )
             else:
                 entity = TelegramChat(

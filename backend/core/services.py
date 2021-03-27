@@ -130,6 +130,7 @@ class Service:
             if isinstance(dialog.entity, TelegramUser):
                 entity = dict(
                     id=dialog.entity.id,
+                    type='user',
                     first_name=dialog.entity.first_name,
                     last_name=dialog.entity.last_name,
                     username=dialog.entity.username,
@@ -141,16 +142,19 @@ class Service:
 
                 entity = dict(
                     id=channel_id,
+                    type='channel',
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                     username=dialog.entity.username,
                     avatar_id=dialog.entity.avatar_id,
+                    admin_rights=dialog.entity.admin_rights
                 )
             else:
                 chat_id = -dialog.entity.id
 
                 entity = dict(
                     id=chat_id,
+                    type='chat',
                     title=dialog.entity.title,
                     creator=dialog.entity.creator,
                     avatar_id=dialog.entity.avatar_id,

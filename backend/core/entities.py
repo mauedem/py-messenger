@@ -45,6 +45,7 @@ class TelegramChannel:
     creator: bool
     username: str
     avatar_id: str
+    admin_rights: bool
 
 
 @dataclass
