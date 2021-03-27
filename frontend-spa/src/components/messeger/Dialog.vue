@@ -87,14 +87,15 @@
                 class="pa-0 ma-0"
             >
                 <v-textarea
-                    style="border-radius: 0; border-left: 1px solid #ccc;
-                font-size: 18px;"
+                    style="border-radius: 0; border-left: 1px solid #ccc; font-size: 18px;"
                     class="elevation-2 pt-n4"
-                    row-height="9"
                     solo
+                    :state="validateState('message')"
                     hide-details
+                    @keydown.enter.exact.prevent="sendMessage"
                     placeholder="Сообщение..."
                     auto-grow
+                    row-height="9"
                     v-model="form.message"
                 >
                     <template #prepend-inner>
@@ -114,11 +115,15 @@
 
 <script>
 import Message from '@/components/messeger/Message'
+import { myValidationMixin } from '@/mixins/validationMixin'
+import { required } from 'vuelidate/lib/validators'
 // import moment from 'moment'
-import 'moment/locale/ru'
+// import 'moment/locale/ru'
 
 export default {
     name: 'Dialog',
+
+    mixins: [myValidationMixin],
 
     components: {
         Message
@@ -144,9 +149,26 @@ export default {
         hasAvatar: true
     }),
 
+    validations: {
+        form: {
+            message: { required }
+        }
+    },
+
     methods: {
         checkIfIAmSender (/** @type {number} */ senderId) {
             return senderId === this.$store.state.currentUser.telegram_credentials.id
+        },
+
+        sendMessage () {
+            if (!this.checkFormValidation()) return
+
+            this.$emit('send-message', this.dialog.entity.id, this.form.message)
+
+            this.form.message = ''
+            this.$nextTick(() => {
+                this.$v.$reset()
+            })
         }
 
         // getMessageDate (messageDate) {

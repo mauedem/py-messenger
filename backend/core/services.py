@@ -206,13 +206,23 @@ class Service:
             message
         )
 
-        formatted_date = message.created_at.strftime("%d/%m/%Y, ""%H:%M:%S")
+        message_created_at = message.created_at
+        local_timezone = pytz.timezone(LOCAL_TIMEZONE)
+        telegram_timezone = pytz.timezone(TELEGRAM_TIMEZONE)
+        localized_message_timestamp = message_created_at.replace(
+            tzinfo=telegram_timezone
+        ).astimezone(local_timezone)
+
+        formatted_date = localized_message_timestamp.strftime(
+            "%d.%m.%Y, ""%H:%M"
+        )
 
         return dict(
             id=message.id,
             created_at=formatted_date,
             sender_id=message.sender_id,
             text=message.text,
+            media=message.media
         )
 
     async def telegram_logout(self):

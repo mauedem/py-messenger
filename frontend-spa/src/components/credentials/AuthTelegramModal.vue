@@ -182,7 +182,7 @@ export default {
             const errors = []
 
             if (!this.$v.form.phoneNumber.$dirty) return errors
-            !this.$v.form.phoneNumber.required &&
+            !this.$v.form.phoneNumber.requiredIf &&
                 errors.push('Это поле обязательно для заполнения')
 
             return errors

@@ -26,6 +26,7 @@
             <Dialog
                 :dialog="selectedChat"
                 :messages="chatMessages"
+                @send-message="sendMessage"
             />
         </v-col>
     </v-row>
@@ -87,6 +88,21 @@ export default {
                 console.log(err)
             } finally {
                 this.areMessagesLoading = false
+            }
+        },
+
+        async sendMessage (
+            /** @type {number} */ receiverId,
+            /** @type {string} */ message
+        ) {
+            try {
+                const sentMessage = await this.$transport.sendMessage({
+                    receiver_id: receiverId,
+                    message: message
+                })
+                this.chatMessages.push(sentMessage)
+            } catch (err) {
+                console.log('err = ', err)
             }
         }
     },

@@ -129,5 +129,23 @@ export default {
 
             return response.json()
         }
+
+        Vue.prototype.$transport.sendMessage = async function (/** @type {object} */ message) {
+            const url = `${baseUrl}/tg/send_message/`
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(message)
+            })
+
+            if (!response.ok) {
+                throw new Error(`Bad response: ${response.status}`)
+            }
+
+            return response.json()
+        }
     }
 }

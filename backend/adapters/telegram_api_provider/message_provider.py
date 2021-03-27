@@ -235,7 +235,8 @@ class TelegramMessageProvider(IMessageProvider):
             id=message.id,
             sender_id=self.current_user.id,
             text=message.message,
-            created_at=message.date
+            created_at=message.date,
+            media=message.media
         )
 
     async def logout(self):
