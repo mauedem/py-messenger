@@ -1,3 +1,3 @@
-GET http://localhost/private_api/tg/messages/?dialog_id=652971394&limit=80
+GET http://localhost/private_api/tg/messages/?dialog_id=-1001351920554&limit=80
 Content-Type: application/json
 

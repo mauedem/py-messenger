@@ -8,17 +8,20 @@
             v-if="!message.media && message.text"
             class="d-flex flex-row align-end"
         >
-            <v-card-text class="px-4 py-2">
+            <v-card-text
+                class="px-4 py-2"
+                style="white-space: pre-wrap"
+            >
                 <span
                     :class="amISender ? myMessageTextColor : penfriendMessageTextColor"
                     style="font-size: 16px"
+                    v-text="message.text"
                 >
-                    {{ message.text }}
                 </span>
             </v-card-text>
 
             <v-card-subtitle
-                class="mb-2 mr-4"
+                class="mr-4 py-2"
                 :class="amISender ? 'white--text' : ''"
             >
                 {{ getMessageTime }}
@@ -61,17 +64,18 @@
             </v-img>
 
             <div class="d-flex flex-row align-end">
-                <v-card-text class="px-4 py-2">
+                <v-card-text class="px-4 py-2"
+                             style="white-space: pre-wrap">
                     <span
                         :class="amISender ? myMessageTextColor : penfriendMessageTextColor"
                         style="font-size: 16px"
+                        v-text="message.text"
                     >
-                        {{ message.text }}
                     </span>
                 </v-card-text>
 
                 <v-card-subtitle
-                    class="mb-2 mr-4"
+                    class="mr-4 py-2"
                     :class="amISender ? 'white--text' : ''"
                 >
                     {{ getMessageTime }}

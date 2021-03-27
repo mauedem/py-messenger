@@ -165,7 +165,6 @@ class TelegramMessageProvider(IMessageProvider):
 
     async def get_dialog_messages(self, dialog_id: str, username: Optional[str],
                                   offset: str, limit: str) -> list[Message]:
-        print('dialog_id = ', dialog_id)
         client = self.get_authorized_user_session()
         await client.connect()
 
@@ -183,6 +182,7 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for message in messages:
+            print('MESSAGE = ', message)
             file_id = None
 
             # TODO переделать загрузку с медия не только на фото
