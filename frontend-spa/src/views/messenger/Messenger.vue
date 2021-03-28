@@ -58,6 +58,14 @@ export default {
         chatMessages: []
     }),
 
+    watch: {
+        chatMessages () {
+            setTimeout(() => {
+                this.scrollToEnd()
+            }, 0)
+        }
+    },
+
     methods: {
         async getTelegramDialogs () {
             try {
@@ -104,8 +112,13 @@ export default {
             } catch (err) {
                 console.log('err = ', err)
             }
+        },
+
+        scrollToEnd () {
+            const dialog = document.getElementById('dialog')
+            dialog.scrollTop = dialog.scrollHeight - dialog.clientHeight
         }
-    },
+    }
 
     // created () {
     //     this.getTelegramDialogs()

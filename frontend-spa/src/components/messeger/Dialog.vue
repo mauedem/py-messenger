@@ -56,6 +56,7 @@
         </v-toolbar>
 
         <div
+            id="dialog"
             :style="getChatHeight"
             class="overflow-y-auto overflow-x-hidden"
         >

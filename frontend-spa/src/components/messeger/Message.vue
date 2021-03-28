@@ -1,5 +1,6 @@
 <template>
     <v-card
+        class="message"
         :color="amISender ? myMessageColor : penfriendMessageColor"
         :style="getCardWidth"
         :class="amISender ? myMessageStyle : penfriendMessageStyle"
