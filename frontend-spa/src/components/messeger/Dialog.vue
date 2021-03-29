@@ -61,15 +61,6 @@
             class="overflow-y-auto overflow-x-hidden"
             @scroll="checkEndOfScroll"
         >
-<!--            <div class="d-flex justify-center">-->
-<!--                <v-chip-->
-<!--                    class="my-3 text-center"-->
-<!--                    style="opacity: 0.8"-->
-<!--                    color="grey darken-4"-->
-<!--                >-->
-<!--                    <span class="white&#45;&#45;text">{{ messagesDate }}</span>-->
-<!--                </v-chip>-->
-<!--            </div>-->
 
             <div
                 v-for="(message, index) in messages"
@@ -122,8 +113,6 @@
 import Message from '@/components/messeger/Message'
 import { myValidationMixin } from '@/mixins/validationMixin'
 import { required } from 'vuelidate/lib/validators'
-// import moment from 'moment'
-// import 'moment/locale/ru'
 
 export default {
     name: 'Dialog',
@@ -211,19 +200,6 @@ export default {
                     this.scrollTop)
             }
         }
-
-        // getMessageDate (messageDate) {
-        //     const dateWithoutTime = messageDate.substr(0, 10)
-        //     moment.locale('ru')
-        //
-        //     const formattedDate = moment(dateWithoutTime, 'DD.MM.YYYY').format('DD MMMM')
-        //
-        //     if (this.messagesDate !== formattedDate) {
-        //         this.messagesDate = formattedDate
-        //     }
-        //
-        //     return formattedDate
-        // }
-    },
+    }
 }
 </script>

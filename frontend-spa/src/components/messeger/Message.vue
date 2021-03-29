@@ -21,12 +21,19 @@
                 </span>
             </v-card-text>
 
-            <v-card-subtitle
-                class="mr-4 py-2"
-                :class="amISender ? 'white--text' : ''"
-            >
-                {{ getMessageTime }}
-            </v-card-subtitle>
+            <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-card-subtitle
+                        class="mr-4 py-2"
+                        :class="amISender ? 'white--text' : ''"
+                        v-bind="attrs"
+                        v-on="on"
+                    >
+                        {{ getMessageTime }}
+                    </v-card-subtitle>
+                </template>
+                <span>{{ getMessageDate }}</span>
+            </v-tooltip>
         </div>
 
         <v-img
@@ -39,18 +46,26 @@
         >
             <div
                 class="d-flex justify-end fill-height">
-                <v-chip
-                    class="d-inline-block text-center mt-auto mb-2 mr-3 px-2"
-                    style="opacity: 0.7; height: 20px"
-                    color="grey darken-4"
-                >
-                    <span
-                        class="white--text"
-                        style="z-index: 999"
-                    >
-                        {{ getMessageTime }}
-                    </span>
-                </v-chip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-chip
+                            class="d-inline-block text-center mt-auto mb-2 mr-3 px-2"
+                            style="opacity: 0.7; height: 20px"
+                            color="grey darken-4"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <span
+                                class="white--text"
+                                style="z-index: 999"
+                            >
+                                {{ getMessageTime }}
+                            </span>
+                        </v-chip>
+                    </template>
+                    <span>{{ getMessageDate }}</span>
+                </v-tooltip>
+
             </div>
         </v-img>
 
@@ -75,18 +90,28 @@
                     </span>
                 </v-card-text>
 
-                <v-card-subtitle
-                    class="mr-4 py-2"
-                    :class="amISender ? 'white--text' : ''"
-                >
-                    {{ getMessageTime }}
-                </v-card-subtitle>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-card-subtitle
+                            class="mr-4 py-2"
+                            :class="amISender ? 'white--text' : ''"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            {{ getMessageTime }}
+                        </v-card-subtitle>
+                    </template>
+                    <span>{{ getMessageDate }}</span>
+                </v-tooltip>
             </div>
         </div>
     </v-card>
 </template>
 
 <script>
+import moment from 'moment'
+import 'moment/locale/ru'
+
 export default {
     name: 'Message',
 
@@ -142,7 +167,20 @@ export default {
                 width: 'auto',
                 'max-width': '40%'
             }
+        },
+
+        getMessageDate () {
+            const messageDate = this.message.created_at.toString()
+
+            const dateWithoutTime = messageDate.substr(0, 10)
+            moment.locale('ru')
+
+            return moment(dateWithoutTime, 'DD.MM.YYYY').format('DD MMMM')
         }
+    },
+
+    created() {
+        console.log('this.message = ', this.message)
     }
 }
 </script>
