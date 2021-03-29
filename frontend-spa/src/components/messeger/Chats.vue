@@ -57,6 +57,7 @@
                 two-line
             >
                 <v-list-item-group
+                    @change=""
                     v-model="selectedChat"
                     color="primary"
                     mandatory
@@ -102,7 +103,6 @@ export default {
 
     methods: {
         selectChat (/** @type {object} */ dialog) {
-            console.log('dialog = ', dialog)
             this.$emit('select-chat', dialog)
         },
 

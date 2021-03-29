@@ -56,9 +56,10 @@
         </v-toolbar>
 
         <div
-            id="dialog"
+            :id="dialog.entity.id"
             :style="getChatHeight"
             class="overflow-y-auto overflow-x-hidden"
+            @scroll="checkEndOfScroll"
         >
 <!--            <div class="d-flex justify-center">-->
 <!--                <v-chip-->
@@ -71,8 +72,8 @@
 <!--            </div>-->
 
             <div
-                v-for="message in messages"
-                :key="message.id"
+                v-for="(message, index) in messages"
+                :key="index"
                 class="my-2 mx-8 d-flex"
             >
                 <message
@@ -150,7 +151,11 @@ export default {
             message: ''
         },
 
-        hasAvatar: true
+        offset: 0,
+
+        scrollTop: 0,
+
+        hasAvatar: true,
     }),
 
     validations: {
@@ -195,6 +200,16 @@ export default {
             this.$nextTick(() => {
                 this.$v.$reset()
             })
+        },
+
+        checkEndOfScroll () {
+            const dialog = document.getElementById(this.dialog.entity.id)
+
+            if (dialog.scrollTop === 0) {
+                this.offset = this.offset + 30
+                this.$emit('load-more-messages', this.dialog, this.offset,
+                    this.scrollTop)
+            }
         }
 
         // getMessageDate (messageDate) {
@@ -209,6 +224,6 @@ export default {
         //
         //     return formattedDate
         // }
-    }
+    },
 }
 </script>

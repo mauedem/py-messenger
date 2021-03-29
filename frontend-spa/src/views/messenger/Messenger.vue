@@ -27,6 +27,7 @@
                 :dialog="selectedChat"
                 :messages="chatMessages"
                 @send-message="sendMessage"
+                @load-more-messages="getChatMessages"
             />
         </v-col>
     </v-row>
@@ -54,16 +55,24 @@ export default {
 
         dialogs: [],
 
+        hasOffeset: false,
+
+        scrollTop: 0,
+
         selectedChat: null,
         chatMessages: []
     }),
 
     watch: {
         chatMessages () {
-            setTimeout(() => {
-                this.scrollToEnd()
-            }, 0)
-        }
+            if (!this.hasOffeset) {
+                setTimeout(() => {
+                    this.scrollToEnd()
+                }, 50)
+            } else {
+                this.preventScroll()
+            }
+        },
     },
 
     methods: {
@@ -81,17 +90,42 @@ export default {
             }
         },
 
-        async getChatMessages (/** @type {object} */ dialog) {
+        async getChatMessages (
+            /** @type {object} */ dialog,
+            /** @type {number} */ offset = 0,
+            /** @type {number} */ scrollTop = 0
+        ) {
+            this.hasOffeset = offset !== 0
+
+            this.scrollTop = scrollTop
+
+            // TODO вынести это в отдельную ф-ию
+            if (this.selectedChat?.entity.id === dialog.entity.id && offset === 0) {
+                this.scrollToEnd()
+                return
+            }
+
             this.selectedChat = dialog
             this.noDialogSelected = false
 
             try {
-                this.areMessagesLoading = true
+                if (!this.hasOffeset) {
+                    this.areMessagesLoading = true
+                    this.chatMessages = []
+                }
 
-                this.chatMessages = await this.$transport.getDialogMessages(
+                const messages = await this.$transport.getDialogMessages(
                     dialog.entity.id,
-                    dialog.entity.username
+                    dialog.entity.username,
+                    offset
                 )
+
+                // TODO прерывать получение предыдущих сообщений при переключении диалога
+                if (!this.chatMessages.length || offset === 0) {
+                    this.chatMessages = messages
+                } else {
+                    this.chatMessages = [...messages, ...this.chatMessages]
+                }
             } catch (err) {
                 console.log(err)
             } finally {
@@ -115,13 +149,15 @@ export default {
         },
 
         scrollToEnd () {
-            const dialog = document.getElementById('dialog')
+            const dialog = document.getElementById(this.selectedChat?.entity.id)
             dialog.scrollTop = dialog.scrollHeight - dialog.clientHeight
-        }
-    }
+        },
 
-    // created () {
-    //     this.getTelegramDialogs()
-    // }
+        preventScroll () {
+            // TODO пофиксить заглушку
+            const dialog = document.getElementById(this.selectedChat.entity.id)
+            dialog.scrollTop = this.scrollTop * 2
+        }
+    },
 }
 </script>
