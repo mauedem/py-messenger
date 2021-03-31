@@ -36,49 +36,80 @@
             </v-tooltip>
         </div>
 
-        <v-img
-            v-show="isPhoto"
+        <v-dialog
             v-else-if="message.media && !message.text"
-            :src="`http://localhost/media/dialogs/${message.media}`"
-            style="border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px"
-            @error="isPhoto = false"
+            max-width="900px"
         >
-            <div
-                class="d-flex justify-end fill-height">
-                <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-chip
-                            class="d-inline-block text-center mt-auto mb-2 mr-3 px-2"
-                            style="opacity: 0.7; height: 20px"
-                            color="grey darken-4"
-                            v-bind="attrs"
-                            v-on="on"
-                        >
+            <template v-slot:activator="{ on, attrs }">
+                <v-img
+                    v-show="isPhoto"
+                    :src="`http://localhost/media/dialogs/${message.media}`"
+                    style="border-bottom-left-radius: 24px;
+                    border-bottom-right-radius: 24px;"
+                    @error="isPhoto = false"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                    <div
+                        class="d-flex justify-end fill-height">
+                        <v-tooltip top>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-chip
+                                    class="d-inline-block text-center mt-auto mb-2 mr-3 px-2"
+                                    style="opacity: 0.7; height: 20px"
+                                    color="grey darken-4"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                >
                             <span
                                 class="white--text"
                                 style="z-index: 999"
                             >
                                 {{ getMessageTime }}
                             </span>
-                        </v-chip>
-                    </template>
-                    <span>{{ getMessageDate }}</span>
-                </v-tooltip>
+                                </v-chip>
+                            </template>
+                            <span>{{ getMessageDate }}</span>
+                        </v-tooltip>
+                    </div>
+                </v-img>
+            </template>
 
-            </div>
-        </v-img>
+            <v-img
+                v-show="isPhoto"
+                :src="`http://localhost/media/dialogs/${message.media}`"
+                @error="isPhoto = false"
+                max-height="100%"
+                width="100%"
+            >
+                <div
+                    class="d-flex justify-end fill-height">
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-chip
+                                class="d-inline-block text-center mt-auto mb-2 mr-3 px-2"
+                                style="opacity: 0.7; height: 20px"
+                                color="grey darken-4"
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                        <span
+                            class="white--text"
+                            style="z-index: 999"
+                        >
+                            {{ getMessageTime }}
+                        </span>
+                            </v-chip>
+                        </template>
+                        <span>{{ getMessageDate }}</span>
+                    </v-tooltip>
+                </div>
+            </v-img>
+        </v-dialog>
 
         <div
             v-else-if="message.media && message.text"
         >
-            <v-img
-                :src="`http://localhost/media/dialogs/${message.media}`"
-                style="border-top-left-radius: 24px;
-                border-top-right-radius: 24px"
-            >
-            </v-img>
-
             <div class="d-flex flex-row align-end">
                 <v-card-text class="px-4 py-2"
                              style="white-space: pre-wrap">
@@ -104,6 +135,24 @@
                     <span>{{ getMessageDate }}</span>
                 </v-tooltip>
             </div>
+
+            <v-dialog max-width="900px">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-img
+                        :src="`http://localhost/media/dialogs/${message.media}`"
+                        style="border-bottom-left-radius: 24px;
+                        border-bottom-right-radius: 24px;"
+                        v-bind="attrs"
+                        v-on="on"
+                    >
+                    </v-img>
+                </template>
+
+                <v-img
+                    :src="`http://localhost/media/dialogs/${message.media}`"
+                >
+                </v-img>
+            </v-dialog>
         </div>
     </v-card>
 </template>

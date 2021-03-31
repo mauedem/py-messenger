@@ -1,5 +1,5 @@
 <template>
-        <v-dialog
+    <v-dialog
         v-model="isDialogVisible"
         max-width="350"
     >
