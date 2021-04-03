@@ -8,7 +8,18 @@
             class="text-h6 font-weight-regular"
             style="font-size: 14px"
         >
-            Чтобы начать, выберите чат
+            <v-chip
+                class="d-inline-block px-3"
+                style="opacity: 0.7; height: 24px"
+                color="grey darken-4"
+            >
+                <span
+                    class="white--text"
+                    style="z-index: 999; font-weight: bold"
+                >
+                    Чтобы начать, выберите чат
+                </span>
+            </v-chip>
         </p>
 
         <v-progress-circular
@@ -29,12 +40,6 @@ export default {
         areMessagesLoading: {
             type: Boolean,
             required: true
-        }
-    },
-
-    watch: {
-        areMessagesLoading (newVal) {
-            console.log('areMessagesLoading NoDialog = ', newVal)
         }
     }
 }

@@ -23,7 +23,7 @@ class AppViews:
             created_user = self.service.register(
                 username=user.username,
                 nickname=user.nickname,
-                password=user.password
+                password=user.password,
             )
 
             return created_user
@@ -59,9 +59,13 @@ class AppViews:
         return response
 
     @router.post('/private_api/tg/authorize/')
-    async def telegram_authorize_view(self, user: TelegramAuthorizeUserModel):
+    async def telegram_authorize_view(self, user: TelegramAuthorizeUserModel,
+                                      token: str = Cookie(None)):
         try:
+            current_user = self.service.authenticate(token)
+
             user = await self.service.telegram_authorize_user(
+                username=current_user['username'],
                 phone_number=user.phone_number,
                 password=user.password,
                 code=user.code
@@ -121,8 +125,12 @@ class AppViews:
         return message
 
     @router.post('/private_api/tg/logout/')
-    async def telegram_logout_view(self):
-        is_user_logout = await self.service.telegram_logout()
+    async def telegram_logout_view(self, token: str = Cookie(None)):
+        current_user = self.service.authenticate(token)
+
+        is_user_logout = await self.service.telegram_logout(
+            username=current_user['username']
+        )
 
         if is_user_logout:
             message = 'User successfully logout'

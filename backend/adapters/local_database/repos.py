@@ -18,7 +18,8 @@ class LocalMessengerRepository(IMessengerRepository):
         user = db[username] = dict(
             username=username,
             nickname=nickname,
-            password=hashed_password
+            password=hashed_password,
+            telegram_credentials=None
         )
 
         return User(**user)
@@ -39,4 +40,33 @@ class LocalMessengerRepository(IMessengerRepository):
         if not user or user['username'] != username:
             raise Exception('Invalid token')
 
-        return User(**user)
+        if not user['telegram_credentials']:
+            return User(**user)
+
+        return User(
+            username=user['username'],
+            nickname=user['nickname'],
+            password=user['password'],
+            telegram_credentials=TelegramUser(
+                id=user['telegram_credentials']['id'],
+                first_name=user['telegram_credentials']['first_name'],
+                last_name=user['telegram_credentials']['last_name'],
+                username=user['telegram_credentials']['username'],
+                phone=user['telegram_credentials']['phone'],
+                avatar_id=user['telegram_credentials']['avatar_id']
+            )
+        )
+
+    def set_telegram_credentials(self, username: str,
+                                 telegram_user: TelegramUser):
+        db[username]['telegram_credentials'] = dict(
+            id=telegram_user.id,
+            first_name=telegram_user.first_name,
+            last_name=telegram_user.last_name,
+            username=telegram_user.username,
+            phone=telegram_user.phone,
+            avatar_id=telegram_user.avatar_id
+        )
+
+    def unset_telegram_credentials(self, username: str):
+        db[username]['telegram_credentials'] = None

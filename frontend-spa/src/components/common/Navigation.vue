@@ -151,7 +151,9 @@ export default {
         },
 
         getCurrentUserAvatar () {
-            return this.currentUser.nickname[0].toUpperCase()
+            if (this.currentUser.username) {
+                return this.currentUser.username[0].toUpperCase()
+            }
         }
     },
 

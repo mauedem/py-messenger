@@ -7,30 +7,44 @@
             class="mx-5 my-4"
             :class="!isSuccessfullyTelegramAuthorized ? 'py-4' : 'py-2'"
             outlined
-            elevation="2"
+            elevation="1"
         >
             <v-list-item three-line>
                 <v-avatar
                     class="mr-3"
                     color="primary"
-                    :size="!isSuccessfullyTelegramAuthorized ? 70 : 100"
+                    :size="!isSuccessfullyTelegramAuthorized ? 70 : 120"
                 >
                     <img
                         v-if="!isSuccessfullyTelegramAuthorized"
-                        src="http://localhost/media/avatars/777000.jpg"
-                        alt="Avatar"
+                        src="http://localhost/media/messengers/telegram.jpg"
+                        alt="Telegram"
                     />
 
-                    <img
-                        v-else
-                        :src="getTelegramUserAvatar"
-                        alt="Avatar"
+                    <v-img
+                        v-else-if="isSuccessfullyTelegramAuthorized && hasUserTelegramAvatar"
+                        src="http://localhost/media/avatars/user_avatar.jpg"
+                        @error="errorHasHappened"
                     />
+
+                    <span
+                        v-else-if="isSuccessfullyTelegramAuthorized && !hasUserTelegramAvatar"
+                        class="white--text headline mx-auto"
+                    >
+                        {{ currentUser.username[0].toUpperCase() }}
+                    </span>
                 </v-avatar>
 
                 <v-list-item-content>
                     <v-list-item-title class="headline mb-1 ml-3">
                         Telegram
+
+                        <svg-icon
+                            v-if="isSuccessfullyTelegramAuthorized"
+                            class="mb-n1"
+                            icon-name="telegram"
+                            style="stroke: #212121"
+                        />
                     </v-list-item-title>
 
                     <v-list-item-subtitle
@@ -42,20 +56,22 @@
 
                     <div v-else>
                         <v-list-item class="mt-0">
-                            <span class="font-weight-bold">{{ getUserName }}</span>
+                            <span class="font-weight-bold">
+                                {{ getTelegramUserName }}
+                            </span>
                         </v-list-item>
 
                         <v-list-item>
                             <span class="text--secondary mt-n12">
-                                {{ user.phone | VMask('+#(###)###-##-##') }}
+                                {{ telegramUser.phone | VMask('+#(###)###-##-##') }}
                             </span>
                         </v-list-item>
 
                         <v-list-item
-                            v-if="user.username"
+                            v-if="telegramUser.username"
                             class="mt-n12"
                             >
-                            <span class="text--secondary">@{{ user.username }}</span>
+                            <span class="text--secondary">@{{ telegramUser.username }}</span>
                         </v-list-item>
                     </div>
                 </v-list-item-content>
@@ -87,7 +103,25 @@
         </v-card>
 
         <v-snackbar
-            v-model="isSuccessfullyNotificationVisible"
+            v-model="isUnsuccessfulNotificationVisible"
+            :timeout="5000"
+            color="error"
+            shaped
+            absolute
+            bottom
+        >
+
+            <template>
+                <v-btn text>
+                    <v-icon>mdi-alert</v-icon>
+                </v-btn>
+            </template>
+
+            Неверные учетные данные
+        </v-snackbar>
+
+        <v-snackbar
+            v-model="isSuccessfulNotificationVisible"
             :timeout="4000"
             absolute
             bottom
@@ -109,6 +143,7 @@
 </template>
 
 <script>
+import SvgIcon from '@/components/common/SvgIcon'
 import AuthTelegramModal from '@/components/credentials/AuthTelegramModal'
 import LogoutTelegramModal from '@/components/credentials/LogoutTelegramModal'
 import { VueMaskFilter } from 'v-mask'
@@ -117,44 +152,42 @@ export default {
     name: 'Credentials',
 
     components: {
+        SvgIcon,
         AuthTelegramModal,
         LogoutTelegramModal
     },
 
     data: () => ({
         isAuthorizedTelegramLoaded: true,
-
         isCodeSending: false,
         isCodeSent: false,
 
-        isSuccessfullyNotificationVisible: false,
+        isSuccessfulNotificationVisible: false,
         isSuccessfullyTelegramAuthorized: false,
+        isUnsuccessfulNotificationVisible: false,
 
-        user: {}
+        hasUserTelegramAvatar: true,
+
+        currentUser: {},
+        telegramUser: {}
     }),
 
     computed: {
-        getUserName () {
-            if (this.user.first_name && this.user.last_name) {
-                return `${this.user.first_name} ${this.user.last_name}`
-            } else if (this.user.first_name || this.user.last_name) {
-                return this.user.first_name || this.user.last_name
+        getTelegramUserName () {
+            if (this.telegramUser.first_name && this.telegramUser.last_name) {
+                return `${this.telegramUser.first_name} ${this.telegramUser.last_name}`
+            } else if (this.telegramUser.first_name ||
+                this.telegramUser.last_name) {
+                return this.telegramUser.first_name ||
+                    this.telegramUser.last_name
             }
 
-            return this.user.username
-        },
-
-        getTelegramUserAvatar () {
-            if (this.isSuccessfullyTelegramAuthorized) {
-                return 'http://localhost/media/avatars/user_avatar.jpg'
-            }
-
-            return ''
+            return this.telegramUser.nickname
         },
 
         getNotificationMessage () {
             if (this.isSuccessfullyTelegramAuthorized) {
-                return `Вы успешно вошли в Telegram как ${this.getUserName}`
+                return `Вы успешно вошли в Telegram как ${this.getTelegramUserName}`
             }
 
             return 'Успешный выход из Telegram'
@@ -167,7 +200,7 @@ export default {
 
     methods: {
         async authorizeTelegram (/** @type {object} */ user) {
-            let userCredentials = this.user
+            let userCredentials = this.telegramUser
 
             if (!user.code) {
                 userCredentials = {
@@ -178,28 +211,36 @@ export default {
                     userCredentials.password = user.password
                 }
 
-                this.user = userCredentials
+                this.telegramUser = userCredentials
             } else {
-                this.user.code = user.code
+                this.telegramUser.code = user.code
             }
 
             try {
                 user.code ? this.isAuthorizedTelegramLoaded = false
                     : this.isCodeSending = true
 
-                this.user = await this.$transport.authorizeTelegramUser(this.user)
+                this.telegramUser = await this.$transport.authorizeTelegramUser(this.telegramUser)
 
-                this.isAuthorizedTelegramLoaded = true
-                this.isSuccessfullyNotificationVisible = true
+                const authorizedUser = await this.$transport.getAuthorizedUser()
+                this.$store.commit('SET_CURRENT_USER', authorizedUser)
+
+                this.isSuccessfulNotificationVisible = true
                 this.isSuccessfullyTelegramAuthorized = true
             } catch (err) {
                 this.isCodeSending = false
+
+                if (user.code) {
+                    this.isUnsuccessfulNotificationVisible = true
+                }
 
                 const { message } = err
 
                 if (message === '449') {
                     this.isCodeSent = true
                 }
+            } finally {
+                this.isAuthorizedTelegramLoaded = true
             }
         },
 
@@ -207,22 +248,32 @@ export default {
             try {
                 await this.$transport.logoutTelegramUser()
 
-                this.user = {}
+                this.currentUser.telegram_credentials = null
+
+                this.$store.commit('SET_CURRENT_USER', this.currentUser)
+
+                this.telegramUser = {}
                 this.isSuccessfullyTelegramAuthorized = false
-                this.isSuccessfullyNotificationVisible = true
+                this.isSuccessfulNotificationVisible = true
             } catch (err) {
                 const { message } = err
 
                 console.log(message)
             }
+        },
+
+        errorHasHappened () {
+            console.log('No avatar. Why?')
+            this.hasUserTelegramAvatar = false
         }
     },
 
     created () {
-        if (Object.keys(this.$store.state.currentUser.telegram_credentials).length !== 0) {
-            this.user = this.$store.state.currentUser.telegram_credentials
-            this.isSuccessfullyTelegramAuthorized = true
-        }
+        this.currentUser = this.$store.state.currentUser
+
+        this.telegramUser = this.$store.state.currentUser.telegram_credentials
+
+        this.isSuccessfullyTelegramAuthorized = !!this.$store.state.currentUser.telegram_credentials
     }
 }
 </script>

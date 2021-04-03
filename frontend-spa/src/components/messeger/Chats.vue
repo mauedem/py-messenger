@@ -40,7 +40,10 @@
             v-show="!areDialodsLoading && !dialogs.length"
             class="mt-5"
         >
-            <p class="text-h6 font-weight-regular text-center">
+            <p
+                class="font-weight-regular text-center"
+                style="font-size: 17px"
+            >
                 Диалогов еще нет
             </p>
 
@@ -57,7 +60,6 @@
                 two-line
             >
                 <v-list-item-group
-                    @change=""
                     v-model="selectedChat"
                     color="primary"
                     mandatory

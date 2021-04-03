@@ -61,12 +61,12 @@
                                     v-bind="attrs"
                                     v-on="on"
                                 >
-                            <span
-                                class="white--text"
-                                style="z-index: 999"
-                            >
-                                {{ getMessageTime }}
-                            </span>
+                                    <span
+                                        class="white--text"
+                                        style="z-index: 999"
+                                    >
+                                        {{ getMessageTime }}
+                                    </span>
                                 </v-chip>
                             </template>
                             <span>{{ getMessageDate }}</span>
@@ -226,10 +226,6 @@ export default {
 
             return moment(dateWithoutTime, 'DD.MM.YYYY').format('DD MMMM')
         }
-    },
-
-    created() {
-        console.log('this.message = ', this.message)
     }
 }
 </script>

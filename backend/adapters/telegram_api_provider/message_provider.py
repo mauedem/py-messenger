@@ -18,6 +18,7 @@ from config import (API_ID, API_HASH)
 
 class TelegramMessageProvider(IMessageProvider):
     # current_user = None
+    # TODO убрать заглушку на свои креды
     current_user = TelegramUser(
         id=412300498,
         first_name='Eryn',
@@ -41,7 +42,6 @@ class TelegramMessageProvider(IMessageProvider):
         client = TelegramClient('user-session', API_ID, API_HASH)
 
         session_key = StringSession.save(client.session)
-        print('session_key = ', session_key)
         os.environ['SESSION_KEY'] = session_key
         with open('session.txt', 'w') as txt_file:
             txt_file.write(session_key)
@@ -90,7 +90,6 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for dialog in dialogs:
-            print('DIALOG = ', dialog)
             file_id = str(dialog.entity.id) + '.jpg'
             avatar_path = join(settings.AVATARS_PATH, file_id)
 
@@ -109,8 +108,6 @@ class TelegramMessageProvider(IMessageProvider):
                 admin_rights = False
                 if dialog.entity.admin_rights:
                     admin_rights = dialog.entity.admin_rights.change_info
-
-                print('admin_rights = ', admin_rights)
 
                 entity = TelegramChannel(
                     id=dialog.entity.id,
@@ -189,7 +186,6 @@ class TelegramMessageProvider(IMessageProvider):
         result = []
         tasks = []
         for message in messages:
-            print('MESSAGE = ', message)
             file_id = None
 
             # TODO переделать загрузку с медия не только на фото
@@ -250,4 +246,7 @@ class TelegramMessageProvider(IMessageProvider):
         client = self.get_authorized_user_session()
         await client.connect()
 
-        return await client.log_out()
+        is_logout_successful = await client.log_out()
+        await client.disconnect()
+
+        return is_logout_successful

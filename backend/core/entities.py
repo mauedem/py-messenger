@@ -8,6 +8,7 @@ class User:
     username: str
     nickname: str
     password: str
+    telegram_credentials: Optional['TelegramUser']
 
 
 # TODO добавить булеанку о том, переслано ли сообщение

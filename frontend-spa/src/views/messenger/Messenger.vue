@@ -159,5 +159,11 @@ export default {
             dialog.scrollTop = this.scrollTop * 2
         }
     },
+
+    // created () {
+    //     if (this.$store.state.currentUser.telegram_credentials) {
+    //         this.getTelegramDialogs()
+    //     }
+    // }
 }
 </script>

@@ -1,2 +1,2 @@
 GET http://127.0.0.1:5000/private_api/auth/authenticate/
-Content-Type: application/json
+Conxtent-Type: application/json

@@ -42,6 +42,7 @@
                                 class="shrink mr-2 mt-n2"
                             ></v-checkbox>
                             <v-text-field
+                                type="password"
                                 label="Пароль"
                                 v-model="form.password"
                                 :state="validateState('password')"

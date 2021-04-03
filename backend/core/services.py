@@ -31,7 +31,8 @@ class Service:
             return dict(
                 username=user.username,
                 nickname=user.nickname,
-                password=user.password
+                password=user.password,
+                telegram_credentials=None
             )
         except BaseException as error:
             raise error
@@ -56,31 +57,40 @@ class Service:
             username = username_dict['username']
             user = self.repo.get_user_by_username(username)
 
-            # TODO убрать хардкод на telegram_credentials
+            if user.telegram_credentials:
+                return dict(
+                    username=user.username,
+                    nickname=user.nickname,
+                    password=user.password,
+                    telegram_credentials=dict(
+                        id=user.telegram_credentials.id,
+                        first_name=user.telegram_credentials.first_name,
+                        last_name=user.telegram_credentials.last_name,
+                        username=user.telegram_credentials.username,
+                        phone=user.telegram_credentials.phone,
+                        avatar_id=user.telegram_credentials.avatar_id
+                    )
+                )
+
             return dict(
                 username=user.username,
                 nickname=user.nickname,
                 password=user.password,
-                telegram_credentials=dict(
-                    id=412300498,
-                    first_name='Eryn',
-                    last_name='Drem',
-                    username='eryndrem',
-                    phone='79530490707',
-                    avatar_id='user_avatar.jpg'
-                )
+                telegram_credentials=None
             )
         except BaseException as error:
             raise error
 
     # Telegram methods
-    async def telegram_authorize_user(self, phone_number: str, password: str,
+    async def telegram_authorize_user(self, username: str, phone_number: str, password: str,
                                       code: str = None) -> dict:
         telegram_user = await self.telegram_provider.authorize_user(
             phone_number=phone_number,
             password=password,
             code=code
         )
+
+        self.repo.set_telegram_credentials(username, telegram_user)
 
         return dict(
             id=telegram_user.id,
@@ -229,5 +239,7 @@ class Service:
             media=message.media
         )
 
-    async def telegram_logout(self):
+    async def telegram_logout(self, username: str):
+        self.repo.unset_telegram_credentials(username)
+
         return await self.telegram_provider.logout()
