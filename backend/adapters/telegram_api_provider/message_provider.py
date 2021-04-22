@@ -17,16 +17,7 @@ from config import (API_ID, API_HASH)
 
 
 class TelegramMessageProvider(IMessageProvider):
-    # current_user = None
-    # TODO убрать заглушку на свои креды
-    current_user = TelegramUser(
-        id=412300498,
-        first_name='Eryn',
-        last_name='Drem',
-        username='eryndrem',
-        phone='79530490707',
-        avatar_id='',
-    )
+    current_user = None
 
     @staticmethod
     def get_authorized_user_session():
