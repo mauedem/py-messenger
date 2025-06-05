@@ -178,7 +178,8 @@ class Service:
 
         return result
 
-    def get_photo(self, file_id: str) -> Optional[bytes]:
+    def get_photo(self, file_id: str) -> str:
+        """Return relative URL path to the stored avatar image."""
         return settings.AVATARS_BASE_URL + file_id
 
     async def get_dialog_messages(self, dialog_id: str, username: Optional[str],
